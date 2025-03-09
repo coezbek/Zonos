@@ -218,98 +218,167 @@ class Zonos(nn.Module):
     @torch.inference_mode()
     def generate(
         self,
-        prefix_conditioning: torch.Tensor,  # [bsz, cond_seq_len, d_model]
-        audio_prefix_codes: torch.Tensor | None = None,  # [bsz, 9, prefix_audio_seq_len]
+        prefix_conditioning: torch.Tensor,  # [batch_size, cond_seq_len, d_model]
+        audio_prefix_codes: torch.Tensor | None = None,  # [batch_size, 9, prefix_audio_seq_len]
         max_new_tokens: int = 86 * 30,
         cfg_scale: float = 2.0,
         batch_size: int = 1,
-        sampling_params: dict = dict(min_p=0.1),
+        sampling_params: dict = dict(
+            top_p=0, 
+            top_k=0, 
+            min_p=0,           
+            linear=0.55, 
+            conf=0.4, 
+            quad=0.0, 
+            repetition_penalty=3.0,
+            repetition_penalty_window=2,
+            temperature=1.0),
         progress_bar: bool = True,
         disable_torch_compile: bool = False,
         callback: Callable[[torch.Tensor, int, int], bool] | None = None,
     ):
+        # Print the sampling parameters as a short string
+        sampling_params_str = '_'.join([f"{k[0]}{v}" for k, v in sampling_params.items()])
+        print(f"Sampling parameters: p45_{sampling_params_str}")
+
+        # Ensure cfg_scale is supported (avoid cfg_scale = 1)
         assert cfg_scale != 1, "TODO: add support for cfg_scale=1"
+
+        # Determine length of any provided audio prefix
         prefix_audio_len = 0 if audio_prefix_codes is None else audio_prefix_codes.shape[2]
+
+        # Get the device (CPU or GPU) on which the model is running
         device = self.device
 
-        # Use CUDA Graphs if supported, and torch.compile otherwise.
+        # Check feasibility of CUDA Graphs and possibly torch.compile
         cg = self.can_use_cudagraphs()
         decode_one_token = self._decode_one_token
         decode_one_token = torch.compile(decode_one_token, dynamic=True, disable=cg or disable_torch_compile)
 
+        # Special token ID for 'unknown' (filler values in the codes array)
         unknown_token = -1
+
+        # Compute how long the final audio sequence can be
         audio_seq_len = prefix_audio_len + max_new_tokens
+
+        # The sequence length includes text prefix, the audio sequence, plus 9 codebooks
         seq_len = prefix_conditioning.shape[1] + audio_seq_len + 9
 
+        # Set up the inference cache for the model (key-value caching, etc.)
         with torch.device(device):
             inference_params = self.setup_cache(batch_size=batch_size * 2, max_seqlen=seq_len)
             codes = torch.full((batch_size, 9, audio_seq_len), unknown_token)
 
+        # If audio prefix codes exist, copy them into the codes tensor
         if audio_prefix_codes is not None:
             codes[..., :prefix_audio_len] = audio_prefix_codes
 
+        # Apply a delay pattern to the codes (typically reordering or shifting tokens)
         delayed_codes = apply_delay_pattern(codes, self.masked_token_id)
 
+        # Select the delayed prefix slice from the start through prefix_audio_len+1
         delayed_prefix_audio_codes = delayed_codes[..., : prefix_audio_len + 1]
 
+        # Prefill the model with the text prefix and the initial delayed audio codes
         logits = self._prefill(prefix_conditioning, delayed_prefix_audio_codes, inference_params, cfg_scale)
+
+        # Sample one token from the logits
         next_token = sample_from_logits(logits, **sampling_params)
 
+        # The offset marks how many tokens we have processed in the audio dimension
         offset = delayed_prefix_audio_codes.shape[2]
+
+        # Retrieve the next "frame" (the [batch_size, 9, 1] slice) and fill unknown positions
         frame = delayed_codes[..., offset : offset + 1]
         frame.masked_scatter_(frame == unknown_token, next_token)
 
+        # Update inference parameters to account for the initial tokens
         prefix_length = prefix_conditioning.shape[1] + prefix_audio_len + 1
         inference_params.seqlen_offset += prefix_length
         inference_params.lengths_per_sample[:] += prefix_length
 
+        # Create a logit bias that forbids codebooks 1..8 from generating an EOS token
         logit_bias = torch.zeros_like(logits)
-        logit_bias[:, 1:, self.eos_token_id] = -torch.inf  # only allow codebook 0 to predict EOS
+        logit_bias[:, 1:, self.eos_token_id] = -torch.inf
 
+        # Track which samples have stopped (hit EOS) and how many steps remain
         stopping = torch.zeros(batch_size, dtype=torch.bool, device=device)
         max_steps = delayed_codes.shape[2] - offset
         remaining_steps = torch.full((batch_size,), max_steps, device=device)
         progress = tqdm(total=max_steps, desc="Generating", disable=not progress_bar)
-        cfg_scale = torch.tensor(cfg_scale)
 
+        cfg_scale = torch.tensor(cfg_scale)
         step = 0
+
+        # Main loop to decode tokens until all sequences have reached their limit or hit EOS
         while torch.max(remaining_steps) > 0:
             offset += 1
+
+            # Retrieve the latest input token
             input_ids = delayed_codes[..., offset - 1 : offset]
+
+            # Decode one token's logits and add the logit bias
             logits = decode_one_token(input_ids, inference_params, cfg_scale, allow_cudagraphs=cg)
             logits += logit_bias
 
-            next_token = sample_from_logits(logits, generated_tokens=delayed_codes[..., :offset], **sampling_params)
+            # Sample from these logits
+            next_token = sample_from_logits(
+                logits,
+                generated_tokens=delayed_codes[..., :offset],
+                **sampling_params
+            )
+
+            # Check if any samples have produced an EOS in codebook 0
             eos_in_cb0 = next_token[:, 0] == self.eos_token_id
 
-            remaining_steps[eos_in_cb0[:, 0]] = torch.minimum(remaining_steps[eos_in_cb0[:, 0]], torch.tensor(9))
+            # If EOS in codebook 0, limit the remaining steps for that sample
+            remaining_steps[eos_in_cb0[:, 0]] = torch.minimum(
+                remaining_steps[eos_in_cb0[:, 0]], torch.tensor(9)
+            )
             stopping |= eos_in_cb0[:, 0]
 
+            # Determine the codebook index in which EOS should be placed
             eos_codebook_idx = 9 - remaining_steps
-            eos_codebook_idx = torch.clamp(eos_codebook_idx, max=9 - 1)
+            eos_codebook_idx = torch.clamp(eos_codebook_idx, max=9 -1)
+
+            # For any samples that are stopping, fill all preceding codebooks with a masked token
+            # and place an EOS token in the correct codebook
             for i in range(next_token.shape[0]):
                 if stopping[i]:
                     idx = eos_codebook_idx[i].item()
                     next_token[i, :idx] = self.masked_token_id
                     next_token[i, idx] = self.eos_token_id
 
+            # Insert the newly sampled tokens into the delayed_codes array
             frame = delayed_codes[..., offset : offset + 1]
             frame.masked_scatter_(frame == unknown_token, next_token)
+
+            # Advance the model's KV cache tracking
             inference_params.seqlen_offset += 1
             inference_params.lengths_per_sample[:] += 1
 
+            # Decrement the available steps for each sample
             remaining_steps -= 1
 
+            # Update the progress bar and step counter
             progress.update()
             step += 1
 
+            # If a callback is defined, call it; if it returns False, we break
             if callback is not None and not callback(frame, step, max_steps):
                 break
 
+        # Revert the delay pattern to restore normal sequential ordering
         out_codes = revert_delay_pattern(delayed_codes)
+
+        # Mask out invalid tokens (>= 1024) to 0
         out_codes.masked_fill_(out_codes >= 1024, 0)
+
+        # Slice off anything beyond offset - 9
         out_codes = out_codes[..., : offset - 9]
 
-        self._cg_graph = None  # reset cuda graph to avoid cache changes
+        # Reset internal CUDA graph if used
+        self._cg_graph = None
 
+        # Return the generated codes
         return out_codes
