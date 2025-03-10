@@ -372,7 +372,10 @@ def make_cond_dict(
     A helper to build the 'cond_dict' that the model expects.
     By default, it will generate a random speaker embedding
     """
-    assert language.lower() in supported_language_codes, "Please pick a supported language"
+    # Make language lower-case and replace _ with - for compatibility
+    language = language.lower().replace("_", "-")
+
+    assert language in supported_language_codes, "Please pick a supported language"
 
     language_code_to_id = {lang: i for i, lang in enumerate(supported_language_codes)}
 
