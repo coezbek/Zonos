@@ -8,7 +8,7 @@ from transformers.models.dac import DacModel
 class DACAutoencoder:
     def __init__(self):
         super().__init__()
-        self.dac = DacModel.from_pretrained("descript/dac_44khz")
+        self.dac = DacModel.from_pretrained("descript/dac_44khz", local_files_only=True)
         self.dac.eval().requires_grad_(False)
         self.codebook_size = self.dac.config.codebook_size
         self.num_codebooks = self.dac.quantizer.n_codebooks
