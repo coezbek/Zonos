@@ -175,6 +175,18 @@ def sample_from_logits(
         if min_p > 0:
             probs = apply_min_p(probs, min_p)
 
+        # Debug: count non-zero probability tokens for first batch element and display top 3 tokens with their probabilities
+        if False:
+            print(f"DEBUG: Logits dimensions - Batch: {logits.shape[0]}, Codebooks: {logits.shape[1]}, Vocab: {logits.shape[2]}")
+
+            # Use first batch element and first codebook if probs.ndim >= 3; otherwise, use first batch element
+            debug_tensor = probs[0, 0] if probs.ndim >= 3 else probs[0]
+            nonzero_count = (debug_tensor > 0).sum().item()
+            top_vals, top_indices = torch.topk(debug_tensor, k=3, dim=-1)
+            print(f"DEBUG: {nonzero_count} non-zero tokens; top3: " +
+                ", ".join([f"{idx.item()}:{val.item():.4f}" for idx, val in zip(top_indices, top_vals)]))
+    
+            
         next_token = multinomial(probs, num_samples=1)
     else:
         next_token = torch.argmax(logits, dim=-1, keepdim=True)
