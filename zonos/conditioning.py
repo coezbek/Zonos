@@ -1,5 +1,6 @@
 from functools import cache
 from typing import Any, Literal, Iterable
+import logging
 
 import torch
 import torch.nn as nn
@@ -46,6 +47,8 @@ class Conditioner(nn.Module):
             assert self.uncond_vector is not None
             return self.uncond_vector.data.view(1, 1, -1)
 
+        # print(f"[DEBUG] Conditioner '{self.name}' inputs: {inputs}")
+
         cond = self.apply_cond(*inputs)
         cond = self.project(cond)
         return cond
@@ -56,6 +59,7 @@ import os
 import sys
 import re
 import unicodedata
+import warnings
 
 import inflect
 import torch
@@ -153,11 +157,30 @@ _symbol_to_id = {s: i for i, s in enumerate(symbols, start=len(SPECIAL_TOKEN_IDS
 
 
 def _get_symbol_id(s: str) -> int:
-    return _symbol_to_id.get(s, 1)
+    """Return the ID for a symbol, or UNK_ID if the symbol is missing.
+       Raises a warning when a symbol is unmapped.
+    """
+    if s in _symbol_to_id:
+        return _symbol_to_id[s]
+    else:
+        # Warn once per missing symbol instance
+        warnings.warn(f"Character '{s}' not recognized; using UNK_ID.", stacklevel=2)
+        return UNK_ID
 
 
 def get_symbol_ids(text: str) -> list[int]:
-    return list(map(_get_symbol_id, text))
+    # Map each character to its ID
+    ids = list(map(_get_symbol_id, text))
+    
+    # Debug output: input text and the output IDs
+    logger = logging.getLogger("phonemizer")
+    logger.debug(f"get_symbol_ids() input: '{text}' -> output IDs: {ids}")
+
+    # Print stacktrace:
+    # import traceback
+    # traceback.print_stack()
+    
+    return ids
 
 
 def tokenize_phonemes(phonemes: list[str]) -> tuple[torch.Tensor, list[int]]:
@@ -197,6 +220,7 @@ def get_backend(language: str) -> "EspeakBackend":
         language,
         preserve_punctuation=True,
         with_stress=True,
+        language_switch="remove-flags",
         punctuation_marks=_punctuation,
         logger=logger,
     )
@@ -205,13 +229,51 @@ def get_backend(language: str) -> "EspeakBackend":
 
 
 def phonemize(texts: list[str], languages: list[str]) -> list[str]:
-    texts = clean(texts, languages)
+    """
+    Processes text with eSpeak but keeps IPA phonemes unchanged.
+    IPA phonemes should be enclosed in `:phonemize/.../`.
+
+    Args:
+        texts: List of input texts containing normal words and optionally IPA phonemes in `:phonemize/.../`.
+        languages: List of corresponding language codes.
+
+    Returns:
+        List of phonemized texts where eSpeak processes normal text, but IPA phonemes remain unchanged.
+    """
+
+    import logging
+    import re
+
+    texts = clean(texts, languages)  # Normalize numbers & preprocess text
+
+    logger = logging.getLogger("phonemizer")
 
     batch_phonemes = []
     for text, language in zip(texts, languages):
-        backend = get_backend(language)
-        phonemes = backend.phonemize([text], strip=True)
-        batch_phonemes.append(phonemes[0])
+        logger.debug(f"Processing text: {text} (Language: {language})")
+
+        # Split text into normal parts and phonemized segments
+        segments = re.split(r'(:phonemize/.*?/)', text)
+        phon_parts = []
+
+        for seg in segments:
+            if seg.startswith(':phonemize/') and seg.endswith('/'):
+                # Extract manual IPA 
+                # ipa_segment = seg[len(':phonemize/'):-1].replace(" ", "") # and remove spaces # Disabled CÖ
+                phon_parts.append(ipa_segment)
+                logger.debug(f"Manual IPA detected: {ipa_segment}")
+
+            elif seg:
+                # Phonemize using eSpeak
+                backend = get_backend(language)
+                ph = backend.phonemize([seg], strip=True)[0]
+                phon_parts.append(ph)
+                logger.debug(f"Phonemized '{seg}' -> '{ph}'")
+
+        # Combine final phoneme output
+        final_phonemes = "".join(phon_parts)
+        batch_phonemes.append(final_phonemes)
+        logger.info(f"Final phoneme output: {final_phonemes}")
 
     return batch_phonemes
 
