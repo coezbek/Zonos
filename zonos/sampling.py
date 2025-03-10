@@ -166,7 +166,7 @@ def sample_from_logits(
 
     if temperature > 0:
         probs = torch.softmax(logits / temperature, dim=-1)
-        if linear > 0.0:
+        if linear > 0:
             probs = apply_unified(probs, linear, conf, quad)
         if top_p > 0:
             probs = apply_top_p(probs, top_p)
