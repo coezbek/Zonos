@@ -245,6 +245,7 @@ class Zonos(nn.Module):
         assert cfg_scale != 1, "TODO: add support for cfg_scale=1"
 
         # Determine length of any provided audio prefix
+        # (audio_prefix_codes is [batch_size, 9, prefix_audio_seq_len])
         prefix_audio_len = 0 if audio_prefix_codes is None else audio_prefix_codes.shape[2]
 
         # Get the device (CPU or GPU) on which the model is running
@@ -252,6 +253,8 @@ class Zonos(nn.Module):
 
         # Check feasibility of CUDA Graphs and possibly torch.compile
         cg = self.can_use_cudagraphs()
+
+        # Compile the _decode_one_token function
         decode_one_token = self._decode_one_token
         decode_one_token = torch.compile(decode_one_token, dynamic=True, disable=cg or disable_torch_compile)
 
@@ -261,7 +264,7 @@ class Zonos(nn.Module):
         # Compute how long the final audio sequence can be
         audio_seq_len = prefix_audio_len + max_new_tokens
 
-        # The sequence length includes text prefix, the audio sequence, plus 9 codebooks
+        # The sequence length includes text prefix, the audio sequence, plus 9 additional ones
         seq_len = prefix_conditioning.shape[1] + audio_seq_len + 9
 
         # Set up the inference cache for the model (key-value caching, etc.)
