@@ -29,7 +29,9 @@ def load_prefix_audio(model, audio_path):
 def main():
     # Load the Zonos model.
     print("Loading Zonos model...")
-    model = Zonos.from_pretrained("Zyphra/Zonos-v0.1-transformer", device=device)
+    model = Zonos.from_pretrained("Zyphra/Zonos-v0.1-transformer", device=device) 
+    # model = Zonos.from_pretrained("Zyphra/Zonos-v0.1-hybrid", device=device) # only GPU
+
     print("  -> Model loaded.")
     
     # Load reference speaker audio to generate speaker embedding.
