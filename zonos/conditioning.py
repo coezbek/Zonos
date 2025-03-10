@@ -1,5 +1,6 @@
 from functools import cache
-from typing import Any, Literal, Iterable
+from typing import Any, Literal, Iterable, Union
+import logging
 
 import torch
 import torch.nn as nn
@@ -328,7 +329,7 @@ supported_language_codes = [
 
 
 def make_cond_dict(
-    text: str = "It would be nice to have time for testing, indeed.",
+    text: Union[str, list[str]] = "Zonos uses eSpeak for text to phoneme conversion!",
     language: str = "en-us",
     speaker: torch.Tensor | None = None,
     
@@ -372,18 +373,27 @@ def make_cond_dict(
     A helper to build the 'cond_dict' that the model expects.
     By default, it will generate a random speaker embedding
     """
-    assert language.lower() in supported_language_codes, "Please pick a supported language"
 
+    # Ensure `text` is a list (even if it's a single string)
+    if isinstance(text, str):
+        text = [text]  # Convert single text to list
+
+    # Make language lower-case and replace _ with - for compatibility
+    language = language.lower().replace("_", "-")
+    assert language in supported_language_codes, "Please pick a supported language"
     language_code_to_id = {lang: i for i, lang in enumerate(supported_language_codes)}
+    language_id = language_code_to_id[language]
+
+    language = [language] * len(text)  # Repeat language for each text
 
     cond_dict = {
-        "espeak": ([text], [language]),
+        "espeak": (text, language),
         "speaker": speaker,
         "emotion": emotion,
         "fmax": fmax,
         "pitch_std": pitch_std,
         "speaking_rate": speaking_rate,
-        "language_id": language_code_to_id[language],
+        "language_id": language_id,
         "vqscore_8": vqscore_8,
         "ctc_loss": ctc_loss,
         "dnsmos_ovrl": dnsmos_ovrl,

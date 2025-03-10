@@ -190,8 +190,14 @@ class Zonos(nn.Module):
         to append new embeddings, then compute the logits.
         """
         # Replicate input_ids if CFG is enabled
-        if cfg_scale != 1.0:
-            input_ids = input_ids.expand(prefix_hidden_states.shape[0], -1, -1)
+        #if cfg_scale != 1.0:
+        #    input_ids = input_ids.expand(prefix_hidden_states.shape[0], -1, -1)
+
+        if input_ids.shape[0] != prefix_hidden_states.shape[0]:
+            # Calculate the required duplication factor.
+            factor = prefix_hidden_states.shape[0] // input_ids.shape[0]
+            input_ids = input_ids.repeat(factor, 1, 1)   
+
         hidden_states = torch.cat([prefix_hidden_states, self.embed_codes(input_ids)], dim=1)
         return self._compute_logits(hidden_states, inference_params, cfg_scale)
 
