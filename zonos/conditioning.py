@@ -328,7 +328,7 @@ supported_language_codes = [
 
 
 def make_cond_dict(
-    text: str = "It would be nice to have time for testing, indeed.",
+    text: str = "Zonos uses eSpeak for text to phoneme conversion!",
     language: str = "en-us",
     speaker: torch.Tensor | None = None,
     
@@ -337,7 +337,7 @@ def make_cond_dict(
     #                     VQScore and DNSMOS because they favor neutral speech
     #
     #                       Happiness, Sadness, Disgust, Fear, Surprise, Anger, Other, Neutral
-    emotion: list[float] = [0.3077, 0.0256, 0.0256, 0.0256, 0.0256, 0.0256, 0.2564, 0.3077],
+    emotion: list[float] = [1.0,       0.05,    0.05,    0.05, 0.05,     0.05,  0.1,   0.2],
 
     # Maximum frequency (0 to 24000), should be 22050 or 24000 for 44.1 or 48 kHz audio
     # For voice cloning use 22050
@@ -365,12 +365,17 @@ def make_cond_dict(
     dnsmos_ovrl: float = 4.0,
     # Only used for the hybrid model
     speaker_noised: bool = False,
-    unconditional_keys: Iterable[str] = {"vqscore_8", "dnsmos_ovrl"},
+    unconditional_keys: Iterable[str] = {"emotion", "vqscore_8", "dnsmos_ovrl"},
     device: torch.device | str = DEFAULT_DEVICE,
 ) -> dict:
+
     """
     A helper to build the 'cond_dict' that the model expects.
     By default, it will generate a random speaker embedding
+
+    Args:
+    unconditional_keys: Include all keys that should not be included in the conditioning dictionary.
+
     """
     # Make language lower-case and replace _ with - for compatibility
     language = language.lower().replace("_", "-")
