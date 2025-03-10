@@ -259,7 +259,7 @@ def phonemize(texts: list[str], languages: list[str]) -> list[str]:
         for seg in segments:
             if seg.startswith(':phonemize/') and seg.endswith('/'):
                 # Extract manual IPA 
-                # ipa_segment = seg[len(':phonemize/'):-1].replace(" ", "") # and remove spaces # Disabled CÖ
+                ipa_segment = seg[len(':phonemize/'):-1] #.replace(" ", "") # and remove spaces # Disabled CÖ
                 phon_parts.append(ipa_segment)
                 logger.debug(f"Manual IPA detected: {ipa_segment}")
 
