@@ -36,7 +36,6 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes):
     
     codes = model.generate(
         conditioning,
-        prefix_conditioning=conditioning,
         audio_prefix_codes=prefix_audio_codes,
         max_new_tokens=args.max_new_tokens,
         cfg_scale=args.cfg_scale,
@@ -92,9 +91,17 @@ def main():
     parser.add_argument("--repetition_penalty", type=float, default=4.0, help="Repetition penalty.")
     parser.add_argument("--repetition_penalty_window", type=int, default=3, help="Repetition penalty window.")
     parser.add_argument("--temperature", type=float, default=1.0, help="Temperature scaling.")
-    parser.add_argument("--progress_bar", action='store_true', help="Show progress bar.")
+    parser.add_argument("--progress_bar", default=True, action='store_true', help="Show progress bar.")
+    parser.add_argument("--verbose", action='store_true', help="Enable debug printouts.")
     
     args = parser.parse_args()
+
+    if args.verbose:
+      import logging
+      # To enable all DEBUG logging:
+      logging.basicConfig(level=logging.DEBUG)
+      # Or enable only phonemizer DEBUG logging:
+      logging.getLogger("phonemizer").setLevel(logging.DEBUG)
     
     print("Loading Zonos model...")
     model = Zonos.from_pretrained("Zyphra/Zonos-v0.1-transformer", device=device)
