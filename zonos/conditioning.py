@@ -399,6 +399,7 @@ def make_cond_dict(
     for k, v in cond_dict.items():
         if isinstance(v, (float, int, list)):
             v = torch.tensor(v)
+
         if isinstance(v, torch.Tensor):
             cond_dict[k] = v.view(1, 1, -1).to(device)
 
