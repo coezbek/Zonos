@@ -91,6 +91,7 @@ _For repeated sampling we highly recommend using the gradio interface instead, a
 
 - **Operating System:** Linux (preferably Ubuntu 22.04/24.04), macOS
 - **GPU:** 6GB+ VRAM, Hybrid additionally requires a 3000-series or newer Nvidia GPU
+- **Cuda Toolkit for Hybrid**
 
 Note: Zonos can also run on CPU provided there is enough free RAM. However, this will be a lot slower than running on a dedicated GPU, and likely won't be sufficient for interactive use.
 
