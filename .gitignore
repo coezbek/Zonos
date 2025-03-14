@@ -11,5 +11,4 @@ wheels/
 
 # Misc.
 .ipynb_checkpoints/
-sample_advanced.wav
-sample.wav
+*.wav
