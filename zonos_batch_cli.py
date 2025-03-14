@@ -40,6 +40,7 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes):
 
     prefix_conditioning = model.prepare_conditioning(cond_dict)
         
+    # Expand prefix_audio_codes to batch size
     prefix_audio_codes = prefix_audio_codes.expand(batch_size, prefix_audio_codes.size(1), prefix_audio_codes.size(2))
 
     print ("conditioning.size(): ", prefix_conditioning.size())
@@ -68,11 +69,23 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes):
     )
 
     # Decode and save batch results
-    wavs = model.autoencoder.decode(codes).cpu()
-    for i, wav in enumerate(wavs):
+    # wavs = model.autoencoder.decode(codes).cpu()
+
+    for i, code in enumerate(codes):
+        # Ensure code has the correct dimensions: [1, num_codebooks, sequence_length]
+        code = code.unsqueeze(0) if code.dim() == 2 else code
+        # Decode the code
+        decoded_audio = model.autoencoder.decode(code).cpu()
+
+        # Save the decoded audio
         output_file = f"{args.output.rstrip('.wav')}_{i}.wav"
-        torchaudio.save(output_file, wav, model.autoencoder.sampling_rate)
+        torchaudio.save(output_file, decoded_audio.squeeze(0), model.autoencoder.sampling_rate)
         print(f"Generated audio saved to {output_file}")
+
+    #for i, wav in enumerate(wavs):
+    #    output_file = f"{args.output.rstrip('.wav')}_{i}.wav"
+    #    torchaudio.save(output_file, wav, model.autoencoder.sampling_rate)
+    #    print(f"Generated audio saved to {output_file}")
 
 def main():
     parser = argparse.ArgumentParser(description="Generate speech with Zonos CLI (Batch Mode).")
