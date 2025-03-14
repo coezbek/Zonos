@@ -312,10 +312,28 @@ class Zonos(nn.Module):
             if callback is not None and not callback(frame, step, max_steps):
                 break
 
+        # Close the progress bar
+        progress.close()
+
+        # Revert the delay pattern to restore normal sequential ordering
         out_codes = revert_delay_pattern(delayed_codes)
-        out_codes.masked_fill_(out_codes >= 1024, 0)
+
+        # Find the first EOS token for each sample in codebook 0
+        eos_positions = (out_codes[:, 0, :] == self.eos_token_id).int().argmax(dim=-1)
+
+        print(eos_positions)
+
+        # Slice off anything beyond offset - 9
         out_codes = out_codes[..., : offset - 9]
 
-        self._cg_graph = None  # reset cuda graph to avoid cache changes
+        # Mask out invalid tokens (>= 1024) to 0
+        out_codes.masked_fill_(out_codes >= 1024, 0)
 
-        return out_codes
+        # Trim each sequence at its own EOS position and store in a list
+        out_codes_list = [out_codes[i, :, :eos_positions[i]].clone() for i in range(out_codes.shape[0])]
+
+        # Reset internal CUDA graph if used
+        self._cg_graph = None
+
+        # Return list of variable-length sequences
+        return out_codes_list
