@@ -49,7 +49,7 @@ def main():
     # Create and explicitly set the conditioning dictionary.
     # Note: make_cond_dict initializes with basic keys.
     cond_dict = make_cond_dict(
-        text="Hello from Zonos, the state of the art text to speech model... ...",
+        text="Hello from Zonos, the state of the art text to speech model. It can generate high-quality audio from text with various voice characteristics.",
         speaker=speaker_embedding,
         language="en-us",
         emotion=[1.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.2], # [Happiness, Sadness, Disgust, Fear, Surprise, Anger, Other, Neutral]
@@ -92,7 +92,8 @@ def main():
     codes = model.generate(
         prefix_conditioning=conditioning,
         audio_prefix_codes=prefix_audio_codes,
-        **generation_params
+        **generation_params,
+        disable_torch_compile=True # Disable Torch compile for processing single samples, its just faster
     )
     
     # Decode the generated codes to a waveform.
