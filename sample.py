@@ -1,3 +1,5 @@
+import logging
+logging.basicConfig(level=logging.INFO)
 import torch
 import torchaudio
 from zonos.model import Zonos
