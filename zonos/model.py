@@ -265,6 +265,7 @@ class Zonos(nn.Module):
 
         logit_bias = torch.zeros_like(logits)
         logit_bias[:, 1:, self.eos_token_id] = -torch.inf  # only allow codebook 0 to predict EOS
+        logit_bias[:, 0, self.eos_token_id] -= torch.log(torch.tensor(2.0, device=logits.device)) # Make EOS less likely because audio often is cut off
 
         stopping = torch.zeros(batch_size, dtype=torch.bool, device=device)
         max_steps = delayed_codes.shape[2] - offset
