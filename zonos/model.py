@@ -267,7 +267,8 @@ class Zonos(nn.Module):
         # because it is continuing one-by-one for each unmasked entry
         # going across batches
         mask = (frame == unknown_token)
-        frame.masked_scatter_(mask, next_token[mask]) 
+        if mask.any():
+            frame.masked_scatter_(mask, next_token[mask])
 
         prefix_length = prefix_conditioning.shape[1] + prefix_audio_len + 1
         inference_params.seqlen_offset += prefix_length
