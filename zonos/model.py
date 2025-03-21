@@ -329,8 +329,7 @@ class Zonos(nn.Module):
 
         # Find the first EOS token for each sample in codebook 0
         eos_positions = (out_codes[:, 0, :] == self.eos_token_id).int().argmax(dim=-1)
-
-        print(eos_positions)
+        eos_positions[eos_positions == 0] = out_codes.shape[2]
 
         # Slice off anything beyond offset - 9
         out_codes = out_codes[..., : offset - 9]
@@ -339,7 +338,7 @@ class Zonos(nn.Module):
         out_codes.masked_fill_(out_codes >= 1024, 0)
 
         # Trim each sequence at its own EOS position and store in a list
-        out_codes_list = [out_codes[i, :, :eos_positions[i]].clone() for i in range(out_codes.shape[0])]
+        out_codes_list = [out_codes[i, :, prefix_audio_len:eos_positions[i]].clone() for i in range(out_codes.shape[0])]
 
         # Reset internal CUDA graph if used
         self._cg_graph = None
