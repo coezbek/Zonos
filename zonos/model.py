@@ -307,7 +307,8 @@ class Zonos(nn.Module):
 
             frame = delayed_codes[..., offset : offset + 1]
             mask = (frame == unknown_token)
-            frame.masked_scatter_(mask, next_token[mask]) 
+            if mask.any():
+                frame.masked_scatter_(mask, next_token[mask])
 
             inference_params.seqlen_offset += 1
             inference_params.lengths_per_sample[:] += 1
