@@ -190,8 +190,14 @@ class Zonos(nn.Module):
         to append new embeddings, then compute the logits.
         """
         # Replicate input_ids if CFG is enabled
-        if cfg_scale != 1.0:
-            input_ids = input_ids.expand(prefix_hidden_states.shape[0], -1, -1)
+        #if cfg_scale != 1.0:
+        #    input_ids = input_ids.expand(prefix_hidden_states.shape[0], -1, -1)
+
+        if input_ids.shape[0] != prefix_hidden_states.shape[0]:
+            # Calculate the required duplication factor.
+            factor = prefix_hidden_states.shape[0] // input_ids.shape[0]
+            input_ids = input_ids.repeat(factor, 1, 1)   
+
         hidden_states = torch.cat([prefix_hidden_states, self.embed_codes(input_ids)], dim=1)
         return self._compute_logits(hidden_states, inference_params, cfg_scale)
 
@@ -371,17 +377,28 @@ class Zonos(nn.Module):
             if callback is not None and not callback(frame, step, max_steps):
                 break
 
+        # Close the progress bar
+        progress.close()
+
         # Revert the delay pattern to restore normal sequential ordering
         out_codes = revert_delay_pattern(delayed_codes)
 
-        # Mask out invalid tokens (>= 1024) to 0
-        out_codes.masked_fill_(out_codes >= 1024, 0)
+        # Find the first EOS token for each sample in codebook 0
+        eos_positions = (out_codes[:, 0, :] == self.eos_token_id).int().argmax(dim=-1)
+
+        print(eos_positions)
 
         # Slice off anything beyond offset - 9
         out_codes = out_codes[..., : offset - 9]
 
+        # Mask out invalid tokens (>= 1024) to 0
+        out_codes.masked_fill_(out_codes >= 1024, 0)
+
+        # Trim each sequence at its own EOS position and store in a list
+        out_codes_list = [out_codes[i, :, :eos_positions[i]].clone() for i in range(out_codes.shape[0])]
+
         # Reset internal CUDA graph if used
         self._cg_graph = None
 
-        # Return the generated codes
-        return out_codes
+        # Return list of variable-length sequences
+        return out_codes_list
