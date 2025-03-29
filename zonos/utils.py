@@ -26,6 +26,28 @@ def pad_weight_(w: nn.Embedding | nn.Linear, multiple: int):
     else:
         raise ValueError(f"Unsupported weight type: {type(w)}")
 
+# Private variable to store the default device
+_default_device = None
+
+def set_device(prefer):
+    """
+    Set the global default device based on preference.
+
+    Args:
+        prefer (str or torch.device): Device selection preference.
+            If a string, it should be 'fastest', 'memory', or a valid device string.
+            If a torch.device, it will be set directly.
+    """
+    global _default_device
+    if isinstance(prefer, torch.device):
+        _default_device = prefer
+    elif isinstance(prefer, str):
+        if prefer in ['fastest', 'memory']:
+            _default_device = get_device(prefer)
+        else:
+            _default_device = torch.device(prefer)
+    else:
+        raise ValueError("Invalid preference type. Must be a string or torch.device.")
 
 def get_device(prefer: str = "fastest") -> torch.device:
     """
@@ -110,4 +132,10 @@ def get_device(prefer: str = "fastest") -> torch.device:
     logger.info("No CUDA devices available. Falling back to CPU.")
     return torch.device("cpu")
 
-DEFAULT_DEVICE = get_device("fastest")
+def __getattr__(name):
+    if name == 'DEFAULT_DEVICE':
+        global _default_device
+        if _default_device is None:
+            _default_device = get_device("fastest")
+        return _default_device
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

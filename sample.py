@@ -3,6 +3,9 @@ import torchaudio
 import logging
 #logging.basicConfig(level=logging.DEBUG)
 
+# To set another device, use set_device before importing any other zonos module
+# from zonos.utils import set_device
+# set_device("cuda:1")
 from zonos.model import Zonos
 from zonos.conditioning import make_cond_dict
 from zonos.utils import DEFAULT_DEVICE as device
