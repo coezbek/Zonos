@@ -13,3 +13,5 @@ wheels/
 .ipynb_checkpoints/
 sample_advanced.wav
 sample.wav
+/*.wav
+.bash_history
