@@ -4,6 +4,7 @@ import torch
 import torchaudio
 import re
 import math
+import json
 from zonos.model import Zonos
 from zonos.conditioning import make_cond_dict
 from zonos.conditioning import phonemize
@@ -110,12 +111,6 @@ def main():
         phonemes = phonemize([segment['text']], [args.language])[0]
         # phonemes = model.phonemizer.phonemize(segment['text'], language=args.language)
 
-        # Write text and phonemes to text file
-        output_txt_filename = os.path.join(args.output, f"{segment['index']:04}.txt")
-        with open(output_txt_filename, 'w', encoding='utf-8') as file:
-            file.write(f"{segment['text']}\n\n")
-            file.write(phonemes)
-
         # Determine if we need to increase speaking rate in phonemes per minute
         speaking_rate = 15.0
 
@@ -124,7 +119,23 @@ def main():
         if phonemes_per_minute > speaking_rate:
             print(f" - Speaking rate must be increased from {speaking_rate} to {phonemes_per_minute:.1f} to utter {len(phonemes)} phonemes in {duration:.2f} seconds.")
             speaking_rate = math.ceil(phonemes_per_minute)
-        
+
+        # Write text and phonemes to text file
+        output_txt_filename = os.path.join(args.output, f"{segment['index']:04}.json")
+        with open(output_txt_filename, 'w', encoding='utf-8') as file:
+            json_str = json.dumps({
+                "text": segment['text'],
+                "phonemes": phonemes,
+                "number_of_phonemes": len(phonemes),
+                "start_time": segment['start_time'],
+                "end_time": segment['end_time'],
+                "duration": duration,
+                "speaking_rate": speaking_rate,                
+                "language": args.language,
+                "output_filename": output_filename,
+            }, ensure_ascii=False, indent=4)
+            file.write(json_str)
+
         # Determine if we should use previous audio and text
         if False and i > 0 and (segments[i - 1]['end_time'] - segment['start_time']) > 0.01:
             prefix_audio_codes = previous_audio_codes
