@@ -196,7 +196,7 @@ class Zonos(nn.Module):
         if input_ids.shape[0] != prefix_hidden_states.shape[0]:
             # Calculate the required duplication factor.
             factor = prefix_hidden_states.shape[0] // input_ids.shape[0]
-            input_ids = input_ids.repeat(factor, 1, 1)   
+            input_ids = input_ids.repeat(factor, 1, 1)
 
         hidden_states = torch.cat([prefix_hidden_states, self.embed_codes(input_ids)], dim=1)
         return self._compute_logits(hidden_states, inference_params, cfg_scale)
@@ -299,7 +299,11 @@ class Zonos(nn.Module):
 
         # Retrieve the next "frame" (the [batch_size, 9, 1] slice) and fill unknown positions
         frame = delayed_codes[..., offset : offset + 1]
-        frame.masked_scatter_(frame == unknown_token, next_token)
+        # For multiple batches, we can't use frame.masked_scatter_(frame == unknown_token, next_token) 
+        # because it is continuing one-by-one for each unmasked entry
+        # going across batches
+        mask = (frame == unknown_token)
+        frame.masked_scatter_(mask, next_token[mask])
 
         # Update inference parameters to account for the initial tokens
         prefix_length = prefix_conditioning.shape[1] + prefix_audio_len + 1
@@ -361,8 +365,9 @@ class Zonos(nn.Module):
 
             # Insert the newly sampled tokens into the delayed_codes array
             frame = delayed_codes[..., offset : offset + 1]
-            frame.masked_scatter_(frame == unknown_token, next_token)
-
+            mask = (frame == unknown_token)
+            frame.masked_scatter_(mask, next_token[mask])
+            
             # Advance the model's KV cache tracking
             inference_params.seqlen_offset += 1
             inference_params.lengths_per_sample[:] += 1
