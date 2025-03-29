@@ -1,6 +1,6 @@
 import json
 from typing import Callable
-
+import logging
 import safetensors
 import torch
 import torch.nn as nn
@@ -245,8 +245,8 @@ class Zonos(nn.Module):
     ):
         # Print the sampling parameters as a short string
         sampling_params_str = '_'.join([f"{k[0]}{v}" for k, v in sampling_params.items()])
-        print(f"Sampling parameters: p45_{sampling_params_str}")
-
+        logging.debug(f"Sampling parameters: {sampling_params_str}")
+        
         # Ensure cfg_scale is supported (avoid cfg_scale = 1)
         assert cfg_scale != 1, "TODO: add support for cfg_scale=1"
 
@@ -385,8 +385,6 @@ class Zonos(nn.Module):
 
         # Find the first EOS token for each sample in codebook 0
         eos_positions = (out_codes[:, 0, :] == self.eos_token_id).int().argmax(dim=-1)
-
-        print(eos_positions)
 
         # Slice off anything beyond offset - 9
         out_codes = out_codes[..., : offset - 9]
