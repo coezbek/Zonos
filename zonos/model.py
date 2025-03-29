@@ -308,7 +308,8 @@ class Zonos(nn.Module):
 
         # Create a logit bias that forbids codebooks 1..8 from generating an EOS token
         logit_bias = torch.zeros_like(logits)
-        logit_bias[:, 1:, self.eos_token_id] = -torch.inf
+        logit_bias[:, 1:, self.eos_token_id] = -torch.inf  # only allow codebook 0 to predict EOS
+        logit_bias[:, 0, self.eos_token_id] -= torch.log(torch.tensor(2.0, device=logits.device)) # Make EOS less likely because audio often is cut off
 
         # Track which samples have stopped (hit EOS) and how many steps remain
         stopping = torch.zeros(batch_size, dtype=torch.bool, device=device)
