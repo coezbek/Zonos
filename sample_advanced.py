@@ -62,7 +62,7 @@ def main():
         ctc_loss=0.0,          # CTC target loss
         dnsmos_ovrl=4.0,       # Overall DNSMOS score
         speaker_noised=False,  # Speaker noising disabled
-        unconditional_keys={"emotion"} # "vqscore_8", "dnsmos_ovrl"
+        unconditional_keys={"emotion", "vqscore_8", "dnsmos_ovrl"}
     )
     
     # Prepare conditioning for the model.
