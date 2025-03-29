@@ -21,6 +21,6 @@ torch.manual_seed(421)
 cond_dict = make_cond_dict(text="Hello, world!", speaker=speaker, language="en-us")
 conditioning = model.prepare_conditioning(cond_dict)
 
-codes = model.generate(conditioning)
+codes = model.generate(conditioning, disable_torch_compile=True)
 
 model.autoencoder.save_codes("sample.wav", codes)
