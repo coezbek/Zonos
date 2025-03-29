@@ -122,7 +122,7 @@ def main():
         duration = segment['end_time'] - segment['start_time']
         phonemes_per_minute = len(phonemes) / duration
         if phonemes_per_minute > speaking_rate:
-            print(f" - Speaking rate must be increased from {speaking_rate} to {phonemes_per_minute} to utter {len(phonemes)} phonemes in {duration:.2f} seconds.")
+            print(f" - Speaking rate must be increased from {speaking_rate} to {phonemes_per_minute:.1f} to utter {len(phonemes)} phonemes in {duration:.2f} seconds.")
             speaking_rate = math.ceil(phonemes_per_minute)
         
         # Determine if we should use previous audio and text
