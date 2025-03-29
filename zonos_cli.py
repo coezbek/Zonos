@@ -2,6 +2,8 @@ import argparse
 import torch
 import torchaudio
 import os
+import logging
+      
 from zonos.model import Zonos
 from zonos.conditioning import make_cond_dict
 from zonos.utils import DEFAULT_DEVICE as device
@@ -54,9 +56,7 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes):
         progress_bar=args.progress_bar,
     )
     
-    wavs = model.autoencoder.decode(codes).cpu()
-    torchaudio.save(args.output, wavs[0], model.autoencoder.sampling_rate)
-    print(f"Generated audio saved to {args.output}")
+    model.autoencoder.save_codes(args.output, codes)
 
 def main():
     parser = argparse.ArgumentParser(description="Generate speech with Zonos CLI.")
@@ -97,11 +97,12 @@ def main():
     args = parser.parse_args()
 
     if args.verbose:
-      import logging
       # To enable all DEBUG logging:
       logging.basicConfig(level=logging.DEBUG)
       # Or enable only phonemizer DEBUG logging:
       logging.getLogger("phonemizer").setLevel(logging.DEBUG)
+    else:
+      logging.basicConfig(level=logging.INFO)      
     
     print("Loading Zonos model...")
     model = Zonos.from_pretrained("Zyphra/Zonos-v0.1-transformer", device=device)

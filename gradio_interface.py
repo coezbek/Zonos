@@ -196,6 +196,9 @@ def generate_audio(
         callback=update_progress,
     )
 
+    assert len(codes) == 1, "Batch size should be 1"
+    codes = codes[0].unsqueeze(0)
+
     wav_out = selected_model.autoencoder.decode(codes).cpu().detach()
     sr_out = selected_model.autoencoder.sampling_rate
     if wav_out.dim() == 2 and wav_out.size(0) > 1:

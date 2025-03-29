@@ -4,7 +4,9 @@ import torch
 import torchaudio
 import logging
 
-# To enable all DEBUG logging:
+# To enable INFO logging:
+# logging.basicConfig(level=logging.INFO)
+# To enable DEBUG logging:
 # logging.basicConfig(level=logging.DEBUG)
 # Or enable only phonemizer DEBUG logging:
 # logging.getLogger("phonemizer").setLevel(logging.DEBUG)
@@ -51,7 +53,7 @@ def main():
     # Create and explicitly set the conditioning dictionary.
     # Note: make_cond_dict initializes with basic keys.
     cond_dict = make_cond_dict(
-        text="Hello from Zonos, the state of the art text to speech model... ...",
+        text="Hello from Zonos, the state of the art text to speech model.",
         speaker=speaker_embedding,
         language="en-us",
         emotion=[1.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.2], # [Happiness, Sadness, Disgust, Fear, Surprise, Anger, Other, Neutral]
@@ -77,11 +79,11 @@ def main():
             "top_p": 0, 
             "top_k": 0,
             "min_p": 0,
-            "linear": 0.5,
-            "conf": 0.4,
+            "linear": 0.8,
+            "conf": 0.2,
             "quad": 0.0,
-            "repetition_penalty": 3.0,
-            "repetition_penalty_window": 2,
+            "repetition_penalty": 2.0,
+            "repetition_penalty_window": 8,
             "temperature": 1.0,
         },
         "progress_bar": True,
@@ -96,14 +98,10 @@ def main():
         audio_prefix_codes=prefix_audio_codes,
         **generation_params
     )
-    
-    # Decode the generated codes to a waveform.
-    wavs = model.autoencoder.decode(codes).cpu()
-    
-    # Save the generated audio.
-    output_path = os.path.join(script_dir, "sample_advanced.wav")
-    torchaudio.save(output_path, wavs[0], model.autoencoder.sampling_rate)
-    print(f"Generated audio saved to {output_path}")
+
+    # Decode the generated codes and save
+    model.autoencoder.save_codes("sample_advanced.wav", codes)
+    print("Audio saved to sample_advanced.wav")
 
 if __name__ == "__main__":
     main()

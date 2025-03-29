@@ -1,5 +1,8 @@
 import torch
 import torchaudio
+import logging
+#logging.basicConfig(level=logging.DEBUG)
+
 from zonos.model import Zonos
 from zonos.conditioning import make_cond_dict
 from zonos.utils import DEFAULT_DEVICE as device
@@ -17,5 +20,4 @@ conditioning = model.prepare_conditioning(cond_dict)
 
 codes = model.generate(conditioning)
 
-wavs = model.autoencoder.decode(codes).cpu()
-torchaudio.save("sample.wav", wavs[0], model.autoencoder.sampling_rate)
+model.autoencoder.save_codes("sample.wav", codes)

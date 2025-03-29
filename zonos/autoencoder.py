@@ -1,9 +1,12 @@
 import math
+import logging
 
 import torch
 import torchaudio
 from transformers.models.dac import DacModel
 
+# Setup logger
+logger = logging.getLogger(__name__)
 
 class DACAutoencoder:
     def __init__(self):
@@ -25,3 +28,41 @@ class DACAutoencoder:
     def decode(self, codes: torch.Tensor) -> torch.Tensor:
         with torch.autocast(self.dac.device.type, torch.float16, enabled=self.dac.device.type != "cpu"):
             return self.dac.decode(audio_codes=codes).audio_values.unsqueeze(1).float()
+
+    def save_codes(self, path: str | list[str], codes: torch.Tensor | list[torch.Tensor]) -> None:
+        """
+        Decode audio codes and save as WAV file(s).
+        
+        Args:
+            path: A single output path or a list of output paths
+            codes: Either a batched tensor [batch_size, num_codebooks, num_codes]
+                  or a list of tensors each with shape [1, num_codebooks, num_codes] or [num_codebooks, num_codes]
+        """
+        # Convert single path to list for uniform handling
+        paths = [path] if isinstance(path, str) else path
+        
+        # Handle different input types for codes
+        if isinstance(codes, list):
+            # Ensure each code has batch dimension
+            code_list = []
+            for c in codes:
+                if c.dim() == 2:  # [num_codebooks, num_codes]
+                    code_list.append(c.unsqueeze(0))
+                else:  # [1, num_codebooks, num_codes] or [batch, num_codebooks, num_codes]
+                    code_list.append(c)
+        else:
+            # Batched tensor - split into list of individual tensors
+            code_list = [codes[i:i+1] for i in range(codes.shape[0])]
+        
+        # Ensure we have the right number of paths
+        assert len(paths) == len(code_list), f"Number of paths ({len(paths)}) must match number of code tensors ({len(code_list)})"
+        
+        # Decode and save each audio file
+        for p, c in zip(paths, code_list):
+            # Decode codes to audio
+            wav = self.decode(c).cpu()
+            
+            # Save audio as WAV file
+            torchaudio.save(p, wav.squeeze(0), self.sampling_rate)
+            logger.info(f"Saved audio to {p}")
+

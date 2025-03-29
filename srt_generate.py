@@ -62,14 +62,8 @@ def generate_audio(text, language, model, speaker_embedding, audio_prefix_codes,
     codes = model.generate(
       prefix_conditioning=conditioning, 
       audio_prefix_codes=audio_prefix_codes)
-    wavs = model.autoencoder.decode(codes).cpu()
-
-    # Save generated audio without reloading it
-    torchaudio.save(output_path, wavs[0], model.autoencoder.sampling_rate)
-    print(f"    Audio saved to {output_path}")
-
-    # Return output path and generated audio codes directly (avoid reloading)
-    return output_path, codes  # No more preprocess_audio() call!
+    
+    model.autoencoder.save_codes(output_path, codes)
 
 def main():
     parser = argparse.ArgumentParser(description="Generate audio snippets from an SRT file using Zonos.")
@@ -136,17 +130,17 @@ def main():
             }, ensure_ascii=False, indent=4)
             file.write(json_str)
 
-        # Determine if we should use previous audio and text
-        if False and i > 0 and (segments[i - 1]['end_time'] - segment['start_time']) > 0.01:
-            prefix_audio_codes = previous_audio_codes
-            text_to_generate = segments[i - 1]['text'] + " " + segment['text']  # Combine previous text
-            print(f" - Generating (cont) {output_filename}")
-        else:
-            prefix_audio_codes = silence_audio_codes
-            text_to_generate = segment['text']
-            print(f" - Generating {output_filename}")
+        # My experiments with using prefixing of the previous audio didn't show any positive results on audio quality
+        # if False and i > 0 and (segments[i - 1]['end_time'] - segment['start_time']) > 0.01:
+        #     prefix_audio_codes = previous_audio_codes
+        #     text_to_generate = segments[i - 1]['text'] + " " + segment['text']  # Combine previous text
+        #     print(f" - Generating (cont) {output_filename}")
+        
+        prefix_audio_codes = silence_audio_codes
+        text_to_generate = segment['text']
+        print(f" - Generating {output_filename}")
 
-        previous_audio, previous_audio_codes = generate_audio(text_to_generate, args.language, model, speaker_embedding, prefix_audio_codes, output_filename, speaking_rate)
+        generate_audio(text_to_generate, args.language, model, speaker_embedding, prefix_audio_codes, output_filename, speaking_rate)
     
     print(" -> Audio snippets generated successfully!")
 

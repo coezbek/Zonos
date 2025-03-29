@@ -60,8 +60,7 @@ conditioning = model.prepare_conditioning(cond_dict)
 
 codes = model.generate(conditioning)
 
-wavs = model.autoencoder.decode(codes).cpu()
-torchaudio.save("sample.wav", wavs[0], model.autoencoder.sampling_rate)
+model.autoencoder.save_codes(codes, "sample.wav")
 ```
 
 ### Gradio interface (recommended)
