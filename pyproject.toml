@@ -19,6 +19,10 @@ dependencies = [
     "soundfile>=0.13.1",
     "huggingface-hub>=0.28.1",
     "gradio>=5.15.0",
+    "pyloudnorm>=0.1.1",
+    "webrtcvad>=2.0.10",
+    "audiobox-aesthetics>=0.0.3",
+    "xxhash>=3.5.0",
 ]
 
 # These are technically optional, but mamba-ssm is required to run hybrid models.
