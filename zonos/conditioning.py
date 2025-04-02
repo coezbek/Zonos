@@ -164,7 +164,7 @@ def _get_symbol_id(s: str) -> int:
         return _symbol_to_id[s]
     else:
         # Warn once per missing symbol instance
-        warnings.warn(f"Character '{s}' not recognized; using UNK_ID.", stacklevel=2)
+        warnings.warn(f"Character ' {s} ' not recognized; using UNK_ID.", stacklevel=2)
         return UNK_ID
 
 
