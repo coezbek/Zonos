@@ -231,46 +231,52 @@ def get_backend(language: str) -> "EspeakBackend":
 def phonemize(texts: list[str], languages: list[str]) -> list[str]:
     """
     Processes text with eSpeak but keeps IPA phonemes unchanged.
-    IPA phonemes should be enclosed in `:phonemize/.../`.
+    Supports `:phonemize(grapheme)/IPA/` and legacy `:phonemize/IPA/`.
 
     Args:
-        texts: List of input texts containing normal words and optionally IPA phonemes in `:phonemize/.../`.
-        languages: List of corresponding language codes.
+        texts: List of input texts.
+        languages: List of language codes.
 
     Returns:
-        List of phonemized texts where eSpeak processes normal text, but IPA phonemes remain unchanged.
+        List of phonemized texts.
     """
 
     import logging
     import re
 
-    texts = clean(texts, languages)  # Normalize numbers & preprocess text
-
+    texts = clean(texts, languages)  # Preprocessing step
     logger = logging.getLogger("phonemizer")
+
+    # Updated regex to support new and old syntax
+    pattern = r'(:phonemize(?:\((.*?)\))?/([^/]+)/)'
 
     batch_phonemes = []
     for text, language in zip(texts, languages):
         logger.debug(f"Processing text: {text} (Language: {language})")
 
-        # Split text into normal parts and phonemized segments
-        segments = re.split(r'(:phonemize/.*?/)', text)
+        segments = re.split(pattern, text)
         phon_parts = []
+        backend = get_backend(language)
 
-        for seg in segments:
-            if seg.startswith(':phonemize/') and seg.endswith('/'):
-                # Extract manual IPA 
-                ipa_segment = seg[len(':phonemize/'):-1] #.replace(" ", "") # and remove spaces # Disabled CÖ
-                phon_parts.append(ipa_segment)
-                logger.debug(f"Manual IPA detected: {ipa_segment}")
+        i = 0
+        while i < len(segments):
+            segment = segments[i]
 
-            elif seg:
-                # Phonemize using eSpeak
-                backend = get_backend(language)
-                ph = backend.phonemize([seg], strip=True)[0]
+            if segment.startswith(':phonemize'):
+                full_tag = segments[i]
+                grapheme = segments[i + 1]  # Can be None if legacy syntax
+                ipa = segments[i + 2]
+                phon_parts.append(ipa)
+                logger.debug(f"Manual IPA detected: grapheme='{grapheme}', ipa='{ipa}'")
+                i += 3  # Move past the matched groups
+            elif segment:
+                ph = backend.phonemize([segment], strip=True)[0]
                 phon_parts.append(ph)
-                logger.debug(f"Phonemized '{seg}' -> '{ph}'")
+                logger.debug(f"Phonemized '{segment}' -> '{ph}'")
+                i += 1
+            else:
+                i += 1
 
-        # Combine final phoneme output
         final_phonemes = "".join(phon_parts)
         batch_phonemes.append(final_phonemes)
         logger.info(f"Final phoneme output: {final_phonemes}")
