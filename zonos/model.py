@@ -266,9 +266,7 @@ class Zonos(nn.Module):
         # For multiple batches, we can't use frame.masked_scatter_(frame == unknown_token, next_token) 
         # because it is continuing one-by-one for each unmasked entry
         # going across batches
-        mask = (frame == unknown_token)
-        if mask.any():
-            frame.masked_scatter_(mask, next_token[mask])
+        delayed_codes[..., offset : offset + 1] = torch.where(frame == unknown_token, next_token, frame)
 
         prefix_length = prefix_conditioning.shape[1] + prefix_audio_len + 1
         inference_params.seqlen_offset += prefix_length
@@ -307,8 +305,7 @@ class Zonos(nn.Module):
 
             frame = delayed_codes[..., offset : offset + 1]
             mask = (frame == unknown_token)
-            if mask.any():
-                frame.masked_scatter_(mask, next_token[mask])
+            delayed_codes[..., offset : offset + 1] = torch.where(frame == unknown_token, next_token, frame)
 
             inference_params.seqlen_offset += 1
             inference_params.lengths_per_sample[:] += 1
