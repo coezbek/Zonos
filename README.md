@@ -24,7 +24,7 @@ Look at out.txt or run it yourself with the following code:
 PYTHONUNBUFFERED=1 uv run zonos_cli.py --text "Hallo Leute! Mein Name ist Chris Sweeney" --language de > out.txt
 ```
 
-If you want to modify the text you also need to update the phonemes hard coded in `_torch.py`.
+If you want to modify the text you also need to update the phonemes hard coded in `_torch.py` (modify where it says `HACK`).
 
 The code should produce a log output which looks like this:
 

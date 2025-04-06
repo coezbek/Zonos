@@ -144,7 +144,9 @@ class TorchZonosBackbone(nn.Module):
             #    print(f"Batch: {b_idx:2d}, Cond: {cond_idx:3d}, Uncond: {uncond_idx:3d}")
 
             values, indices = avg_attn_weights.topk(k=3, dim=-1)  # Each row: top 5 phoneme scores
+
             # print(f"Input pos: {input_pos[0, 0]:3d} - {avg_attn_weights[0, 0]:.3f} - {avg_attn_weights[0, 7]:.3f} {avg_attn_weights[0, 8]:.3f} {avg_attn_weights[0, 9]:.3f} - {avg_attn_weights[0, 16]:.3f} - {avg_attn_weights[0, 33]:.3f} - {avg_attn_weights[0, 39]:.3f} - {avg_attn_weights[0, 47]:.3f} - {indices[0].cpu().tolist()}")
+            # HACK
             print(highlight_phonemes('hˈaloː lˈɔøtə! mˈaɪn nˈɑːmə ɪst kɾˈɪs svˈeːnaɪ', avg_attn_weights[0], threshold=2.0))
 
 
@@ -242,7 +244,7 @@ class Attention(nn.Module):
             if attn_weights.shape[2] == 1:
                 # Average over heads explicitly:
                 avg_attn_weights = attn_weights.mean(dim=1).squeeze(1)  # [batch_size, src_len]
-                avg_attn_weights = avg_attn_weights[:, :48] # Only consider the first 66 phonemes
+                avg_attn_weights = avg_attn_weights[:, :48] # Only consider the first 48 phonemes / HACK
 
                 GLOBAL_ATTN.append(avg_attn_weights)
 
