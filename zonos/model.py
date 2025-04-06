@@ -131,17 +131,17 @@ class Zonos(nn.Module):
         We only recapture if the batch size changes.
         """
         # TODO: support cfg_scale==1
-        if cfg_scale == 1.0:
-            hidden_states = self.embed_codes(input_ids)
-            return self._compute_logits(hidden_states, inference_params, cfg_scale)
+        # if cfg_scale == 1.0:
+        #    hidden_states = self.embed_codes(input_ids)
+        #    return self._compute_logits(hidden_states, inference_params, cfg_scale)
 
-        bsz = input_ids.size(0)
-
+        # Transformer does not support cudagraphs:
         if not allow_cudagraphs or input_ids.device.type != "cuda":
             hidden_states_local = self.embed_codes(input_ids)
             hidden_states_local = hidden_states_local.repeat(2, 1, 1)
             return self._compute_logits(hidden_states_local, inference_params, cfg_scale)
 
+        bsz = input_ids.size(0)
         need_capture = (self._cg_graph is None) or (self._cg_batch_size != bsz)
 
         if need_capture:
