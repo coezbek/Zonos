@@ -199,6 +199,7 @@ def get_backend(language: str) -> "EspeakBackend":
         preserve_punctuation=True,
         with_stress=True,
         punctuation_marks=_punctuation,
+        language_switch="remove-flags",
         logger=logger,
     )
     logger.setLevel(logging.ERROR)
