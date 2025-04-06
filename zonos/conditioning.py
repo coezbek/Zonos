@@ -205,6 +205,8 @@ def get_backend(language: str) -> "EspeakBackend":
     )
     return backend
 
+# Cache for warnings to avoid duplicate messages
+warning_cache = set()
 
 def phonemize(texts: list[str], languages: list[str]) -> list[str]:
     texts = clean(texts, languages)
@@ -212,12 +214,14 @@ def phonemize(texts: list[str], languages: list[str]) -> list[str]:
     batch_phonemes = []
     for text, language in zip(texts, languages):
         backend = get_backend(language)
-        phonemes = backend.phonemize([text], strip=True)
-        batch_phonemes.append(phonemes[0])
-        if '??' in phonemes[0]:
-            logging.warning(f"Espeak failed to phonemize, returned at least one phoneme as '??':\nText: {text} -> Phonemes: {phonemes[0]}")
+        phonemes = backend.phonemize([text], strip=True)[0]
+        batch_phonemes.append(phonemes)
+        global warning_cache
+        if '??' in phonemes and phonemes not in warning_cache:
+            warning_cache.add(phonemes)
+            backend.logger.warning(f"⚠️  Espeak failed to phonemize, returned at least one phoneme as '??':\nText: {text} -> Phonemes: {phonemes}")
         else:
-            logging.debug(f"Text: {text} -> Phonemes: {phonemes[0]}")
+            backend.logger.debug(f"Text: {text} -> Phonemes: {phonemes}")
 
     return batch_phonemes
 
