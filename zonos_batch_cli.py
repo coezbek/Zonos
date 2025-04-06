@@ -30,7 +30,7 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes, prefix_au
     # Expand prefix audio text for batch size
     prefix_audio_text = prefix_audio_text * (batch_size // len(prefix_audio_text))
 
-    text = [prefix_audio_text[i] + " " + args.text[i] for i in range(batch_size)]
+    text = [(prefix_audio_text[i] + " " if prefix_audio_text[i] else "") + args.text[i] for i in range(batch_size)]
 
     overall_quality = []
 
