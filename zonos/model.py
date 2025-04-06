@@ -14,7 +14,7 @@ from zonos.conditioning import PrefixConditioner
 from zonos.config import InferenceParams, ZonosConfig
 from zonos.sampling import sample_from_logits
 from zonos.speaker_cloning import SpeakerEmbeddingLDA
-from zonos.utils import DEFAULT_DEVICE, find_multiple, pad_weight_
+from zonos.utils import DEFAULT_DEVICE, find_multiple, pad_weight_, hub_download
 
 DEFAULT_BACKBONE_CLS = next(iter(BACKBONES.values()))
 
@@ -58,8 +58,8 @@ class Zonos(nn.Module):
     def from_pretrained(
         cls, repo_id: str, revision: str | None = None, device: str = DEFAULT_DEVICE, **kwargs
     ) -> "Zonos":
-        config_path = hf_hub_download(repo_id=repo_id, filename="config.json", revision=revision)
-        model_path = hf_hub_download(repo_id=repo_id, filename="model.safetensors", revision=revision)
+        config_path = hub_download(repo_id=repo_id, filename="config.json", revision=revision)
+        model_path = hub_download(repo_id=repo_id, filename="model.safetensors", revision=revision)
         return cls.from_local(config_path, model_path, device, **kwargs)
 
     @classmethod
