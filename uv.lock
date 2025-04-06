@@ -53,7 +53,7 @@ wheels = [
 [[package]]
 name = "audiobox-aesthetics"
 version = "0.0.1"
-source = { git = "https://github.com/coezbek/audiobox-aesthetics.git#a36bbdef3f98f10d4963d33859de11e51f197ef0" }
+source = { git = "https://github.com/coezbek/audiobox-aesthetics.git#667d5495eccb83df8484a9d88f39c89a4bfdb4e9" }
 dependencies = [
     { name = "huggingface-hub" },
     { name = "numpy" },
