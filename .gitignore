@@ -11,3 +11,4 @@ wheels/
 
 # Misc.
 .ipynb_checkpoints/
+*.wav

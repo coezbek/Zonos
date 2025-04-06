@@ -75,6 +75,25 @@ This should produce a `sample.wav` file in your project root directory.
 
 _For repeated sampling we highly recommend using the gradio interface instead, as the minimal example needs to load the model every time it is run._
 
+### Batching
+
+Zonos supports batch process as many samples as you have memory to accomodate. An RTX 3090/4090 with 24 GB can handle 64 samples at once with the default max token settings (30s of audio). An RTX 4060Ti with 8 GB can handle 8 samples at once.
+
+You can use the `zonos_batch_cli.py` script to run batch processing from the command line.
+
+```bash
+uv run zonos_batch_cli.py --help
+
+# e.g. to generate 2 samples concurrently
+uv run zonos_batch_cli.py --text "Hello, world!" "This audio is generated in parallel." "Zonos is a new TTS model." "Generating four samples at once should require six gigabytes."
+
+# or read from input file and generate two version for each text:
+uv run zonos_batch_cli.py --input_file sample_input.txt --output output/output.wav --text_repeat 2
+```
+
+```python
+
+
 ## Features
 
 - Zero-shot TTS with voice cloning: Input desired text and a 10-30s speaker sample to generate high quality TTS output
