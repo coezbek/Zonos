@@ -194,6 +194,7 @@ def get_backend(language: str) -> "EspeakBackend":
     from phonemizer.backend import EspeakBackend
 
     logger = logging.getLogger("phonemizer")
+    logger.setLevel(logging.WARNING)
     backend = EspeakBackend(
         language,
         preserve_punctuation=True,
@@ -202,7 +203,6 @@ def get_backend(language: str) -> "EspeakBackend":
         language_switch="remove-flags",
         logger=logger,
     )
-    logger.setLevel(logging.WARNING)
     return backend
 
 
