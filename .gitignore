@@ -12,3 +12,4 @@ wheels/
 # Misc.
 .ipynb_checkpoints/
 *.wav
+transcripts.json
