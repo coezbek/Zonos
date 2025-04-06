@@ -1,5 +1,9 @@
 import torch
+import logging
 
+# __name__ == "zonos.sampling"
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 def multinomial(input: torch.Tensor, num_samples: int, replacement=False, *, generator=None):
     """torch.multinomial with arbitrary number of dimensions, and number of candidates on the last dimension.
@@ -25,8 +29,26 @@ def multinomial(input: torch.Tensor, num_samples: int, replacement=False, *, gen
     output = output_.reshape(*list(input.shape[:-1]), -1)
     return output
 
+def summarize_tensor_stats(t: torch.Tensor, name="Tensor"):
+    flat = t.flatten()
+    stats = {
+        "min": flat.min().item(),
+        "q25": flat.quantile(0.25).item(),
+        "median": flat.median().item(),
+        "q75": flat.quantile(0.75).item(),
+        "max": flat.max().item(),
+        "mean": flat.mean().item(),
+        "std": flat.std().item(),
+    }
 
-def apply_unified(probs: torch.Tensor, linear: float, conf: float, quad: float) -> torch.Tensor:
+    headers = "  ".join(f"{k:>7}" for k in stats.keys())
+    values  = "  ".join(f"{v:7.4f}" for v in stats.values())
+
+    head = f"Stats for {name}"
+    print(f"{head}: {headers}")
+    print(f"{' ' * len(head)}  {values}")
+
+def apply_unified(probs: torch.Tensor, linear: float, conf: float, quad: float, debug=False) -> torch.Tensor:
     """Sample next token using unified sampling approach that combines linear scaling, confidence, and quadratic terms.
     
     Args:
@@ -39,7 +61,14 @@ def apply_unified(probs: torch.Tensor, linear: float, conf: float, quad: float) 
     """
     logprobs = torch.log(probs.clamp_min(1e-20))
     entropy = -torch.sum(probs * logprobs, dim=-1, keepdim=True)
-    raw = logprobs * (linear + entropy * conf) - logprobs**2 * quad
+
+    if debug:
+        scaling = linear + entropy * conf - logprobs * quad
+        summarize_tensor_stats(scaling[0, 0], f"unified scaling with {linear} linear and {entropy[0, 0].item():.4f} entropy")
+        raw = logprobs * scaling
+    else:
+        raw = logprobs * (linear + entropy * conf) - logprobs**2 * quad
+
     return raw.softmax(dim=-1)
 
 def apply_top_k(
@@ -111,8 +140,51 @@ def modify_logit_for_repetition_penalty(
     generated_tokens = generated_tokens.clamp_max(logits.shape[-1] - 1).to(torch.int64)
     rp = torch.full_like(logits, repetition_penalty)
     factors = torch.ones_like(logits).scatter_reduce(2, generated_tokens, rp, reduce="prod")
+
+    # Debugging: print the penalized tokens
+    if False:
+        # Get positions where factor is different from 1 (i.e., penalized tokens)
+        penalized_mask = factors != 1
+
+        # Extract penalized token indices and their corresponding factors
+        penalized_tokens = torch.nonzero(penalized_mask, as_tuple=True)  # Indices of penalized tokens
+        penalized_values = factors[penalized_mask]  # The actual penalty values
+
+        # Print penalized tokens per batch and codebook
+        for batch_idx in range(logits.shape[0]):
+            for codebook_idx in range(logits.shape[1]):
+                mask = penalized_mask[batch_idx, codebook_idx]  # Mask for this batch/codebook
+                if mask.any():  # If there are penalized tokens
+                    tokens = generated_tokens[batch_idx, codebook_idx].tolist()
+                    penalties = factors[batch_idx, codebook_idx][mask].tolist()
+                    print(f"Batch {batch_idx}, Codebook {codebook_idx} | Penalized Tokens: {tokens} | Factors: {penalties}")
+                
     return torch.where(logits <= 0, logits * factors, logits / factors)
 
+def print_prob_stats(probs: torch.Tensor, batch_idx: int = 0, codebook_idx: int = 0, top_k: int = 5, mass_threshold: float = 0.95, before=False):
+    p = probs[batch_idx, codebook_idx]
+    top_probs, top_indices = torch.topk(p, k=top_k)
+    num_non_zero = (p > 0).sum().item()
+    sorted_p, _ = torch.sort(p, descending=True)
+    cumulative = torch.cumsum(sorted_p, dim=0)
+    tokens_to_mass = (cumulative < mass_threshold).sum().item() + 1
+    tokens_str = ', '.join(f'{t:>4}' for t in top_indices.tolist())
+    probs_str = ', '.join(f'{v:.3f}' for v in top_probs.tolist())
+
+    before_str = "Before" if before else "After "
+    print(f"{before_str} Batch {batch_idx}, Codebook {codebook_idx} | Top {top_k}: [{tokens_str}] | Probs: [{probs_str}] | Non-zero: {num_non_zero:>4} | {int(mass_threshold*100)}% mass in: {tokens_to_mass:>4} tokens | {before_str}")
+    if not before:
+        global distribution
+        distribution.append(tokens_to_mass)
+        print(f"  Average number of tokens to choose top 95%: {sum(distribution) / len(distribution):.2f}")
+
+        global num_non_zero_tokens
+        num_non_zero_tokens.append(num_non_zero)
+        print(f"  Average number of non-zero tokens: {sum(num_non_zero_tokens) / len(num_non_zero_tokens):.2f}")
+    
+offset = 0
+distribution = []
+num_non_zero_tokens = []
 
 def sample_from_logits(
     logits: torch.Tensor,
@@ -164,16 +236,38 @@ def sample_from_logits(
     if repetition_penalty != 1.0 and generated_tokens is not None:
         logits = modify_logit_for_repetition_penalty(logits, generated_tokens, repetition_penalty, repetition_penalty_window)
 
+    global offset
+    if offset == 0 and logger.isEnabledFor(logging.DEBUG):
+        print(f"Temperature: {temperature}, Top P: {top_p}, Top K: {top_k}, Min P: {min_p}, Linear: {linear}, Conf: {conf}, Quad: {quad} | RepPen: {repetition_penalty}, RepPenWindow: {repetition_penalty_window}")
+
     if temperature > 0:
+
+        # Linear disables temperature
         probs = torch.softmax(logits / temperature, dim=-1)
-        if linear > 0.0:
-            probs = apply_unified(probs, linear, conf, quad)
+        offset += 1
+        debug = offset % 64 == 0 and logger.isEnabledFor(logging.DEBUG)
+
+        if top_p > 0:
+            mass_threshold = top_p
+        else:
+            mass_threshold = 0.95
+
+        if debug:
+            print_prob_stats(probs, batch_idx=0, codebook_idx=0, top_k=5, mass_threshold=mass_threshold, before=True)
+
+        if linear > 0:
+            probs = apply_unified(probs, linear, conf, quad, debug=debug)
+        
         if top_p > 0:
             probs = apply_top_p(probs, top_p)
         if top_k > 0:
             probs = apply_top_k(probs, top_k)
         if min_p > 0:
             probs = apply_min_p(probs, min_p)
+
+        # Only print for codebook 0
+        if debug:
+            print_prob_stats(probs, batch_idx=0, codebook_idx=0, top_k=5, mass_threshold=mass_threshold, before=False)
 
         next_token = multinomial(probs, num_samples=1)
     else:
