@@ -16,6 +16,239 @@
 
 ---
 
+This is an experimental branch to visualize attention moving over a string.
+
+Look at out.txt or run it yourself with the following code:
+
+```bash
+PYTHONUNBUFFERED=1 uv run zonos_cli.py --text "Hallo Leute! Mein Name ist Chris Sweeney" --language de > out.txt
+```
+
+If you want to modify the text you also need to update the phonemes hard coded in `_torch.py`.
+
+The code should produce a log output which looks like this:
+
+```bash
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a *l* o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a *l* o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a *l* o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ *ɑ* ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ *ɑ* ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t *ə* !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ* ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ *ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e* ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ *ø* t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ *ø* t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * * l  ˈ  ɔ *ø* t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * * l  ˈ  ɔ *ø* t  ə  ! * * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * * l  ˈ  ɔ  ø  t  ə  ! * * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * **l* ˈ  ɔ  ø  t  ə  ! * * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * **l* ˈ  ɔ  ø  t  ə  ! * * m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː *m**ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * **l* ˈ  ɔ  ø *t* ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː    *l* ˈ  ɔ  ø *t* ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː    *l* ˈ  ɔ  ø *t**ə* !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː    *l* ˈ  ɔ  ø *t**ə* !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø *t**ə* !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə* !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə* !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə**!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə**!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s**t** * k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t** * k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!** * m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!** * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!** **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n    *n**ˈ**ɑ**ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə    *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s* v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ *n** * n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː *m* ə     ɪ  s  t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n *ˈ* ɑ  ː *m* ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n *ˈ**ɑ* ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a**ɪ**n*    n  ˈ  ɑ *ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a**ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ**n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ**n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n** * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n *ˈ* ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * **n**ˈ**ɑ**ː* m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n    *n**ˈ**ɑ**ː* m  ə * **ɪ**s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n    *n* ˈ *ɑ**ː* m  ə * * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n    *n* ˈ  ɑ *ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ *ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n *ˈ* ɑ *ː**m**ə*   *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ *ː**m* ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ *ː**m**ə*   *ɪ* s *t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː *m**ə*   *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː *m**ə*   *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː *m**ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n *ˈ* ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n    *n**ˈ* ɑ  ː  m *ə** * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a* ɪ  n     n *ˈ* ɑ  ː  m *ə** * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a* ɪ  n     n  ˈ  ɑ  ː  m  ə * * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə * **ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m  ə * **ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː  m  ə * **ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə    *ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * **n* ˈ  ɑ  ː  m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t*    k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t** * k *ɾ* ˈ  ɪ  s     s *v* ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ* ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ**ˈ**ɪ* s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ**ɪ* s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ**ɪ**s*    s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ**ɪ**s*    s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ *ɪ**s*    s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ *ɪ**s*    s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ *ɪ**s** * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ *s** * s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k  ɾ  ˈ  ɪ  s * **s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k  ɾ  ˈ  ɪ  s * **s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s * **s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s     s  v *ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ**e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ**e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e *ː**n**a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n* a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ *ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ *ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ *s*    s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l *o**ː** * l *ˈ* ɔ  ø *t**ə**!*    m  ˈ  a  ɪ  n     n *ˈ**ɑ* ː  m  ə * * ɪ  s *t** * k  ɾ  ˈ *ɪ**s** * s  v  ˈ *e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ ```
+
+---
+
 Zonos-v0.1 is a leading open-weight text-to-speech model trained on more than 200k hours of varied multilingual speech, delivering expressiveness and quality on par with—or even surpassing—top TTS providers.
 
 Our model enables highly natural speech generation from text prompts when given a speaker embedding or audio prefix, and can accurately perform speech cloning when given a reference clip spanning just a few seconds. The conditioning setup also allows for fine control over speaking rate, pitch variation, audio quality, and emotions such as happiness, fear, sadness, and anger. The model outputs speech natively at 44kHz.
