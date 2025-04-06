@@ -230,8 +230,11 @@ class EspeakPhonemeConditioner(Conditioner):
         device = self.phoneme_embedder.weight.device
 
         phonemes = phonemize(texts, languages)
+        print(f"Phonemes {len(phonemes)}, [0]={len(phonemes[0])}: {phonemes}")
         phoneme_ids, _ = tokenize_phonemes(phonemes)
+        print(f"Phoneme IDs {phoneme_ids.shape}: {phoneme_ids}")
         phoneme_embeds = self.phoneme_embedder(phoneme_ids.to(device))
+        print(f"Phoneme Embeds {phoneme_embeds.shape}: {phoneme_embeds}")
 
         return phoneme_embeds
 
@@ -306,12 +309,17 @@ class PrefixConditioner(Conditioner):
             raise ValueError(f"Missing required keys: {self.required_keys - set(cond_dict)}")
         conds = []
         for conditioner in self.conditioners:
+            c = conditioner(cond_dict.get(conditioner.name))
+            print(f"Conditioner {conditioner.name} output shape: {c.shape} and content: {c}")
             conds.append(conditioner(cond_dict.get(conditioner.name)))
         max_bsz = max(map(len, conds))
         assert all(c.shape[0] in (max_bsz, 1) for c in conds)
         conds = [c.expand(max_bsz, -1, -1) for c in conds]
-        return self.norm(self.project(torch.cat(conds, dim=-2)))
+        result = self.norm(self.project(torch.cat(conds, dim=-2)))
 
+        print(f"Result shape: {result.shape}")
+        return result
+    
 
 supported_language_codes = [
     'af', 'am', 'an', 'ar', 'as', 'az', 'ba', 'bg', 'bn', 'bpy', 'bs', 'ca', 'cmn',
@@ -391,7 +399,9 @@ def make_cond_dict(
     }
 
     for k in unconditional_keys:
-        cond_dict.pop(k, None)
+        if k in cond_dict:
+            print(f"Warning: cond_dict key '{k}' has value {cond_dict[k]} but is marked as unconditional. Removing it.")
+            cond_dict.pop(k, None)
 
     for k, v in cond_dict.items():
         if isinstance(v, (float, int, list)):

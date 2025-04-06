@@ -1,10 +1,13 @@
 # Based on gpt-fast: https://github.com/pytorch-labs/gpt-fast/blob/095b2229ee3a40e379c11f05b94bd6923db63b4b/model.py
+import math
 import torch
 import torch.nn as nn
 from torch.nn import functional as F
 
 from zonos.config import BackboneConfig, InferenceParams
 
+GLOBAL_ATTN = []
+GLOBAL_AVERAGE = []
 
 def precompute_freqs_cis(seq_len: int, n_elem: int, base: float = 10000) -> torch.Tensor:
     freqs = 1.0 / (base ** (torch.arange(0, n_elem, 2)[: (n_elem // 2)].float() / n_elem))
@@ -48,6 +51,35 @@ def _update_kv_cache(
     kv_cache[batch_start:batch_end, sequence_start:sequence_end, 1, ...] = v
     return kv_cache[batch_start:batch_end, :sequence_end, ...]
 
+def highlight_phonemes(phoneme_string: str, rel_attention: torch.Tensor, threshold: float = 2.0) -> str:
+    """
+    phoneme_string: e.g. "hˈaloː lˈɔøtə!"
+    rel_attention: e.g. shape [len(phoneme_string)], containing per-phoneme relative attention
+    threshold: highlight if rel_attention[i] >= threshold
+
+    returns: a string with each phoneme separated by space and 
+             an asterisk marking the ones >= threshold
+    """
+    # We'll split the string into individual phonemes/chars. 
+    # If your code uses a separate array of phonemes, adapt accordingly.
+    # For raw text, this is just a list of each character.
+    phonemes = list(phoneme_string)
+
+    # Build an output list of tokens, highlighting as needed
+    output_tokens = []
+    for i, ch in enumerate(phonemes):
+        # Safely handle if rel_attention is shorter than the string
+        if i < len(rel_attention):
+            if rel_attention[i] >= threshold:
+                output_tokens.append(f"*{ch}*")
+            else:
+                output_tokens.append(f" {ch} ")
+        else:
+            # If we run out of attention values, just append the char
+            output_tokens.append(ch)
+
+    # Join with spaces (or however you want to separate them)
+    return "".join(output_tokens)
 
 class TorchZonosBackbone(nn.Module):
     supported_architectures = ["transformer"]
@@ -72,11 +104,59 @@ class TorchZonosBackbone(nn.Module):
 
     def forward(self, hidden_states: torch.Tensor, inference_params: InferenceParams) -> torch.Tensor:
         input_pos = torch.arange(0, hidden_states.shape[1], device=hidden_states.device)
+        # print(f"Before - Input pos shape: {input_pos.shape} - {input_pos}")
         input_pos = input_pos + inference_params.lengths_per_sample.unsqueeze(-1)
-
+        # print(f"After - Input pos shape: {input_pos.shape} - {input_pos}")
+        #print(f"Input pos: {input_pos[0, 0]}")
+        
         freqs_cis = self.freqs_cis[input_pos].expand(hidden_states.shape[0], -1, -1, -1)
+
+        GLOBAL_ATTN.clear()
         for i, layer in enumerate(self.layers):
             hidden_states = layer(hidden_states, inference_params, freqs_cis)
+
+        if len(GLOBAL_ATTN) > 0:
+
+            avg_attn_weights = torch.stack(GLOBAL_ATTN[2:3], dim=0).mean(0) # torch.stack(GLOBAL_ATTN, dim=0).mean(0)
+            avg_attn_weights = avg_attn_weights / avg_attn_weights.sum(dim=-1, keepdim=True)
+
+            if not hasattr(self, "running_attn_sum"):
+                self.running_attn_sum = None
+                self.running_count = 0
+
+            if self.running_attn_sum is None:
+                # First item
+                self.running_attn_sum = avg_attn_weights.detach().clone()
+                self.running_count = 1
+            else:
+                # Weighted running sum
+                self.running_attn_sum += avg_attn_weights.detach()
+                self.running_count += 1
+
+            running_avg_attn = self.running_attn_sum / self.running_count
+
+            avg_attn_weights = avg_attn_weights / running_avg_attn
+
+            #top_phoneme_indices = avg_attn_weights.argmax(dim=-1)
+            #for b_idx in range(0, avg_attn_weights.shape[0], 2):
+            #    cond_idx = top_phoneme_indices[b_idx].item()
+            ##    uncond_idx = top_phoneme_indices[b_idx + 1].item()
+            #    print(f"Batch: {b_idx:2d}, Cond: {cond_idx:3d}, Uncond: {uncond_idx:3d}")
+
+            values, indices = avg_attn_weights.topk(k=3, dim=-1)  # Each row: top 5 phoneme scores
+            # print(f"Input pos: {input_pos[0, 0]:3d} - {avg_attn_weights[0, 0]:.3f} - {avg_attn_weights[0, 7]:.3f} {avg_attn_weights[0, 8]:.3f} {avg_attn_weights[0, 9]:.3f} - {avg_attn_weights[0, 16]:.3f} - {avg_attn_weights[0, 33]:.3f} - {avg_attn_weights[0, 39]:.3f} - {avg_attn_weights[0, 47]:.3f} - {indices[0].cpu().tolist()}")
+            print(highlight_phonemes('hˈaloː lˈɔøtə! mˈaɪn nˈɑːmə ɪst kɾˈɪs svˈeːnaɪ', avg_attn_weights[0], threshold=2.0))
+
+
+            # Now iterate over each batch example
+#            for b_idx in range(0, avg_attn_weights.shape[0], 2):  # e.g., stepping in pairs
+#                print(f"Input pos: {input_pos[0, 0]} - {b_idx} -> top_k {indices[b_idx]}")
+                ## indices[b_idx] is shape [5], values[b_idx] is shape [5]
+                #for rank in range(5):
+                #    phoneme_idx = indices[b_idx, rank].item()
+                #    attn_val = values[b_idx, rank].item()
+                #    print(f"   Rank {rank+1}: phoneme idx {phoneme_idx} with attention {attn_val:.3f}")
+
         return self.norm_f(hidden_states)
 
 
@@ -115,7 +195,8 @@ class Attention(nn.Module):
         self.out_proj = nn.Linear(self.num_heads * self.head_dim, config.d_model, bias=False)
 
     def forward(self, x: torch.Tensor, inference_params: InferenceParams, freqs_cis: torch.Tensor) -> torch.Tensor:
-        batch_size, seqlen, _ = x.shape
+        batch_size, seqlen, d_model = x.shape
+        # print(f"B={batch_size}, T={seqlen}, D={d_model}")
 
         q_size = self.num_heads * self.head_dim
         kv_size = self.num_heads_kv * self.head_dim
@@ -125,6 +206,13 @@ class Attention(nn.Module):
         k = k.view(batch_size, seqlen, self.num_heads_kv, self.head_dim)
         v = v.view(batch_size, seqlen, self.num_heads_kv, self.head_dim)
 
+        # [OPTIONAL] Debug prints or asserts
+        # Assert Q and K are shaped as we expect:
+        assert q.shape == (batch_size, seqlen, self.num_heads, self.head_dim), \
+            f"Expected q to be [B={batch_size}, T={seqlen}, Hq={self.num_heads}, D={self.head_dim}], got {q.shape}"
+        assert k.shape == (batch_size, seqlen, self.num_heads_kv, self.head_dim), \
+            f"Expected k to be [B={batch_size}, T={seqlen}, Hk={self.num_heads_kv}, D={self.head_dim}], got {k.shape}"
+
         q = apply_rotary_emb(q, freqs_cis)
         k = apply_rotary_emb(k, freqs_cis)
 
@@ -133,7 +221,47 @@ class Attention(nn.Module):
 
         q, k, v = map(lambda x: x.transpose(1, 2), (q, k, v))
 
-        y = F.scaled_dot_product_attention(q, k, v, is_causal=seqlen > 1, enable_gqa=True)
+        if False:
+            y = F.scaled_dot_product_attention(q, k, v, is_causal=seqlen > 1, enable_gqa=True)
+
+        else:
+            if self.num_heads_kv != self.num_heads:
+                repeat_factor = self.num_heads // self.num_heads_kv
+                k = k.repeat_interleave(repeat_factor, dim=1)
+                v = v.repeat_interleave(repeat_factor, dim=1)
+
+            d_k = q.size(-1)
+            attn_logits = torch.matmul(q, k.transpose(-2, -1)) / math.sqrt(d_k)
+
+            if seqlen > 1:
+                causal_mask = torch.tril(torch.ones(seqlen, seqlen, device=q.device)).unsqueeze(0).unsqueeze(0)
+                attn_logits = attn_logits.masked_fill(causal_mask == 0, float('-inf'))
+
+            attn_weights = F.softmax(attn_logits, dim=-1)
+
+            if attn_weights.shape[2] == 1:
+                # Average over heads explicitly:
+                avg_attn_weights = attn_weights.mean(dim=1).squeeze(1)  # [batch_size, src_len]
+                avg_attn_weights = avg_attn_weights[:, :48] # Only consider the first 66 phonemes
+
+                GLOBAL_ATTN.append(avg_attn_weights)
+
+                # Now find the phoneme index with highest attention explicitly:
+                #top_phoneme_indices = avg_attn_weights.argmax(dim=-1)  # [batch_size]
+
+                # Explicitly print or store this information clearly:
+                #for b_idx, phoneme_idx in enumerate(top_phoneme_indices):
+                #    print(f"Batch {b_idx} is currently attending most strongly to phoneme index: {phoneme_idx.item()}")
+
+                #if True or self.layer_idx == 25 or self.layer_idx == 0:
+                #    for b_idx in range(0, avg_attn_weights.shape[0], 2):
+                #        cond_idx = top_phoneme_indices[b_idx].item()
+                #        uncond_idx = top_phoneme_indices[b_idx + 1].item()
+                #        print(f"Layer: {self.layer_idx:2d}, Batch: {b_idx:2d}, Cond: {cond_idx:3d}, Uncond: {uncond_idx:3d}")
+            else:
+                print(f"Attention weights shape is not 2D (but: {attn_weights.shape}), skipping")
+
+            y = torch.matmul(attn_weights, v)
 
         y = y.transpose(1, 2).contiguous().view(batch_size, seqlen, q_size)
 

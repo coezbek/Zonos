@@ -1,0 +1,615 @@
+CUDA devices available: 2
+Device 0: NVIDIA GeForce RTX 3090, Compute Capability: 8.6, Multiprocessors: 82, Memory: 24.00 GB
+Device 1: NVIDIA GeForce RTX 4060 Ti, Compute Capability: 8.9, Multiprocessors: 34, Memory: 8.00 GB
+Selected device 1: NVIDIA GeForce RTX 4060 Ti
+Loading Zonos model...
+🔹 Found 246 keys in model.safetensors:
+  ▶ Key: backbone.layers.0.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.0.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.0.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.0.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.0.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.0.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.0.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.0.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.1.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.10.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.11.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.12.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.13.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.14.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.15.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.16.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.17.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.18.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.19.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.2.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.20.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.21.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.22.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.23.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.24.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.25.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.3.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.4.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.5.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.6.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.7.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.8.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.mixer.in_proj.weight, Shape: torch.Size([3072, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.mixer.out_proj.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.mlp.fc1.weight, Shape: torch.Size([16384, 2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.mlp.fc2.weight, Shape: torch.Size([2048, 8192]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.norm2.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.layers.9.norm2.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.norm_f.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: backbone.norm_f.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.0.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.1.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.2.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.3.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.4.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.5.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.6.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.7.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: embeddings.8.weight, Shape: torch.Size([1026, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.0.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.1.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.2.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.3.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.4.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.5.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.6.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.7.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: heads.8.weight, Shape: torch.Size([1025, 2048]), Dtype: torch.bfloat16
+  ▶ Key: prefix_conditioner.conditioners.0.phoneme_embedder.weight, Shape: torch.Size([189, 2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([ 0.0205, -0.0075,  0.0008,  0.0037, -0.0027], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.1.project.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-0.0085, -0.1187,  0.0302,  0.0903, -0.0036], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.1.project.weight, Shape: torch.Size([2048, 128]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-0.0018, -0.0146,  0.0557,  0.0339, -0.0354], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.1.uncond_vector, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([ 0.7070, -0.4707,  1.2188,  0.5039,  1.0234], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.2.uncond_vector, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-1.0312, -0.4727, -0.2402,  0.6641,  0.5273], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.2.weight, Shape: torch.Size([1024, 8]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([ 1.1016, -0.5078, -1.1953, -2.5312, -1.4766], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.3.uncond_vector, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([ 1.7656,  1.7031, -1.9219, -0.7266,  0.6289], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.3.weight, Shape: torch.Size([1024, 1]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([0.6133, 1.0312, 0.0688, 1.3750, 1.7969], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.4.uncond_vector, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-1.2031,  0.4824,  1.7109, -0.5039, -0.9609], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.4.weight, Shape: torch.Size([1024, 1]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-0.8203,  0.3789, -0.9219,  1.5234, -0.6992], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.5.uncond_vector, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-1.2031,  0.5586, -0.7891, -0.0304, -1.5703], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.5.weight, Shape: torch.Size([1024, 1]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([ 0.5820,  0.8672, -0.1943,  0.1533, -0.4824], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.6.int_embedder.weight, Shape: torch.Size([128, 2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-0.2451,  0.7188, -0.6914, -0.0078,  0.3340], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.conditioners.6.uncond_vector, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([ 0.2168,  0.0806, -0.0708,  0.6875,  1.0547], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.norm.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-0.0299,  0.0039,  0.0076, -0.0188,  0.0317], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.norm.weight, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([0.9844, 0.9531, 0.9727, 0.9531, 0.9727], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.project.bias, Shape: torch.Size([2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([ 0.0273, -0.0214, -0.0120,  0.0201, -0.0417], dtype=torch.bfloat16)
+  ▶ Key: prefix_conditioner.project.weight, Shape: torch.Size([2048, 2048]), Dtype: torch.bfloat16
+    🔎 Sample Values: tensor([-0.0208,  0.0059, -0.0273,  0.0095, -0.0275], dtype=torch.bfloat16)
+Loading speaker reference audio...
+Loading prefix audio...
+Input sampling rate: 44100
+Right pad: 0
+Generating speech...
+Warning: cond_dict key 'emotion' has value [1.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.2] but is marked as unconditional. Removing it.
+Warning: cond_dict key 'vqscore_8' has value [0.78, 0.78, 0.78, 0.78, 0.78, 0.78, 0.78, 0.78] but is marked as unconditional. Removing it.
+Warning: cond_dict key 'dnsmos_ovrl' has value 4.0 but is marked as unconditional. Removing it.
+Phonemes 1, [0]=46: ['hˈaloː lˈɔøtə! mˈaɪn nˈɑːmə ɪst kɾˈɪs svˈeːnaɪ']
+Phoneme IDs torch.Size([1, 48]): tensor([[  2,  61, 167,  54,  65,  68, 169,  21,  65, 167,  87, 127,  73,  94,
+           8,  21,  66, 167,  54, 113,  67,  21,  67, 167,  80, 169,  66,  94,
+          21, 113,  72,  73,  21,  64, 136, 167, 113,  72,  21,  72,  75, 167,
+          58, 169,  67,  54, 113,   3]])
+Phoneme Embeds torch.Size([1, 48, 2048]): tensor([[[ 0.0099,  0.0239,  0.0056,  ..., -0.0024,  0.0171,  0.0206],
+         [ 0.0027,  0.0150, -0.0189,  ...,  0.0052,  0.0221,  0.0069],
+         [ 0.0018,  0.0087,  0.0070,  ...,  0.0032, -0.0129,  0.0026],
+         ...,
+         [ 0.0066,  0.0133, -0.0381,  ...,  0.0170, -0.0041,  0.0007],
+         [ 0.0212,  0.0203,  0.0209,  ...,  0.0182, -0.0132, -0.0138],
+         [ 0.0018, -0.0148,  0.0085,  ..., -0.0022,  0.0133,  0.0116]]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<EmbeddingBackward0>)
+Conditioner espeak output shape: torch.Size([1, 48, 2048]) and content: tensor([[[ 0.0099,  0.0239,  0.0056,  ..., -0.0024,  0.0171,  0.0206],
+         [ 0.0027,  0.0150, -0.0189,  ...,  0.0052,  0.0221,  0.0069],
+         [ 0.0018,  0.0087,  0.0070,  ...,  0.0032, -0.0129,  0.0026],
+         ...,
+         [ 0.0066,  0.0133, -0.0381,  ...,  0.0170, -0.0041,  0.0007],
+         [ 0.0212,  0.0203,  0.0209,  ...,  0.0182, -0.0132, -0.0138],
+         [ 0.0018, -0.0148,  0.0085,  ..., -0.0022,  0.0133,  0.0116]]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<EmbeddingBackward0>)
+Phonemes 1, [0]=46: ['hˈaloː lˈɔøtə! mˈaɪn nˈɑːmə ɪst kɾˈɪs svˈeːnaɪ']
+Phoneme IDs torch.Size([1, 48]): tensor([[  2,  61, 167,  54,  65,  68, 169,  21,  65, 167,  87, 127,  73,  94,
+           8,  21,  66, 167,  54, 113,  67,  21,  67, 167,  80, 169,  66,  94,
+          21, 113,  72,  73,  21,  64, 136, 167, 113,  72,  21,  72,  75, 167,
+          58, 169,  67,  54, 113,   3]])
+Phoneme Embeds torch.Size([1, 48, 2048]): tensor([[[ 0.0099,  0.0239,  0.0056,  ..., -0.0024,  0.0171,  0.0206],
+         [ 0.0027,  0.0150, -0.0189,  ...,  0.0052,  0.0221,  0.0069],
+         [ 0.0018,  0.0087,  0.0070,  ...,  0.0032, -0.0129,  0.0026],
+         ...,
+         [ 0.0066,  0.0133, -0.0381,  ...,  0.0170, -0.0041,  0.0007],
+         [ 0.0212,  0.0203,  0.0209,  ...,  0.0182, -0.0132, -0.0138],
+         [ 0.0018, -0.0148,  0.0085,  ..., -0.0022,  0.0133,  0.0116]]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<EmbeddingBackward0>)
+Conditioner speaker output shape: torch.Size([1, 2048]) and content: tensor([[-0.4727, -0.2852,  0.2100,  ...,  1.4531,  1.6953, -0.4082]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<AddmmBackward0>)
+Conditioner emotion output shape: torch.Size([1, 1, 2048]) and content: tensor([[[-1.0312, -0.4727, -0.2402,  ...,  0.7891, -0.0383, -0.0266]]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner fmax output shape: torch.Size([1, 2048]) and content: tensor([[-0.9180,  0.9492,  0.9219,  ..., -0.5469, -0.4219,  0.4395]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner pitch_std output shape: torch.Size([1, 2048]) and content: tensor([[ 0.8359,  0.9648,  0.7930,  ..., -0.5781,  0.3887,  0.0309]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner speaking_rate output shape: torch.Size([1, 2048]) and content: tensor([[ 0.1943, -0.4590,  0.8984,  ..., -0.5586,  0.9141,  0.6602]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner language_id output shape: torch.Size([1, 2048]) and content: tensor([[-0.0107,  0.6914, -0.1572,  ..., -0.7188,  0.1924, -1.3984]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<EmbeddingBackward0>)
+Result shape: torch.Size([1, 54, 2048])
+Phonemes 1, [0]=46: ['hˈaloː lˈɔøtə! mˈaɪn nˈɑːmə ɪst kɾˈɪs svˈeːnaɪ']
+Phoneme IDs torch.Size([1, 48]): tensor([[  2,  61, 167,  54,  65,  68, 169,  21,  65, 167,  87, 127,  73,  94,
+           8,  21,  66, 167,  54, 113,  67,  21,  67, 167,  80, 169,  66,  94,
+          21, 113,  72,  73,  21,  64, 136, 167, 113,  72,  21,  72,  75, 167,
+          58, 169,  67,  54, 113,   3]])
+Phoneme Embeds torch.Size([1, 48, 2048]): tensor([[[ 0.0099,  0.0239,  0.0056,  ..., -0.0024,  0.0171,  0.0206],
+         [ 0.0027,  0.0150, -0.0189,  ...,  0.0052,  0.0221,  0.0069],
+         [ 0.0018,  0.0087,  0.0070,  ...,  0.0032, -0.0129,  0.0026],
+         ...,
+         [ 0.0066,  0.0133, -0.0381,  ...,  0.0170, -0.0041,  0.0007],
+         [ 0.0212,  0.0203,  0.0209,  ...,  0.0182, -0.0132, -0.0138],
+         [ 0.0018, -0.0148,  0.0085,  ..., -0.0022,  0.0133,  0.0116]]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<EmbeddingBackward0>)
+Conditioner espeak output shape: torch.Size([1, 48, 2048]) and content: tensor([[[ 0.0099,  0.0239,  0.0056,  ..., -0.0024,  0.0171,  0.0206],
+         [ 0.0027,  0.0150, -0.0189,  ...,  0.0052,  0.0221,  0.0069],
+         [ 0.0018,  0.0087,  0.0070,  ...,  0.0032, -0.0129,  0.0026],
+         ...,
+         [ 0.0066,  0.0133, -0.0381,  ...,  0.0170, -0.0041,  0.0007],
+         [ 0.0212,  0.0203,  0.0209,  ...,  0.0182, -0.0132, -0.0138],
+         [ 0.0018, -0.0148,  0.0085,  ..., -0.0022,  0.0133,  0.0116]]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<EmbeddingBackward0>)
+Phonemes 1, [0]=46: ['hˈaloː lˈɔøtə! mˈaɪn nˈɑːmə ɪst kɾˈɪs svˈeːnaɪ']
+Phoneme IDs torch.Size([1, 48]): tensor([[  2,  61, 167,  54,  65,  68, 169,  21,  65, 167,  87, 127,  73,  94,
+           8,  21,  66, 167,  54, 113,  67,  21,  67, 167,  80, 169,  66,  94,
+          21, 113,  72,  73,  21,  64, 136, 167, 113,  72,  21,  72,  75, 167,
+          58, 169,  67,  54, 113,   3]])
+Phoneme Embeds torch.Size([1, 48, 2048]): tensor([[[ 0.0099,  0.0239,  0.0056,  ..., -0.0024,  0.0171,  0.0206],
+         [ 0.0027,  0.0150, -0.0189,  ...,  0.0052,  0.0221,  0.0069],
+         [ 0.0018,  0.0087,  0.0070,  ...,  0.0032, -0.0129,  0.0026],
+         ...,
+         [ 0.0066,  0.0133, -0.0381,  ...,  0.0170, -0.0041,  0.0007],
+         [ 0.0212,  0.0203,  0.0209,  ...,  0.0182, -0.0132, -0.0138],
+         [ 0.0018, -0.0148,  0.0085,  ..., -0.0022,  0.0133,  0.0116]]],
+       device='cuda:1', dtype=torch.bfloat16, grad_fn=<EmbeddingBackward0>)
+Conditioner speaker output shape: torch.Size([1, 1, 2048]) and content: tensor([[[ 0.7070, -0.4707,  1.2188,  ..., -0.2520,  0.4883, -0.6367]]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner emotion output shape: torch.Size([1, 1, 2048]) and content: tensor([[[-1.0312, -0.4727, -0.2402,  ...,  0.7891, -0.0383, -0.0266]]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner fmax output shape: torch.Size([1, 1, 2048]) and content: tensor([[[ 1.7656,  1.7031, -1.9219,  ..., -1.3125,  0.7188, -0.1309]]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner pitch_std output shape: torch.Size([1, 1, 2048]) and content: tensor([[[-1.2031,  0.4824,  1.7109,  ...,  0.0574,  2.0312,  0.2695]]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner speaking_rate output shape: torch.Size([1, 1, 2048]) and content: tensor([[[-1.2031,  0.5586, -0.7891,  ..., -0.4453,  0.1963,  0.5078]]],
+       device='cuda:1', dtype=torch.bfloat16)
+Conditioner language_id output shape: torch.Size([1, 1, 2048]) and content: tensor([[[ 0.2168,  0.0806, -0.0708,  ...,  0.0444,  2.2812,  0.0520]]],
+       device='cuda:1', dtype=torch.bfloat16)
+Result shape: torch.Size([1, 54, 2048])
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+Attention weights shape is not 2D (but: torch.Size([2, 16, 85, 85])), skipping
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a *l* o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a *l* o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a *l* o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ *ɑ* ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l *o* ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ *ɑ* ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t *ə* !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ* ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ *ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e* ː  n  a  ɪ 
+ h  ˈ  a  l  o *ː*    l  ˈ  ɔ *ø* t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ *ø* t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * * l  ˈ  ɔ *ø* t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * * l  ˈ  ɔ *ø* t  ə  ! * * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * * l  ˈ  ɔ  ø  t  ə  ! * * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * **l* ˈ  ɔ  ø  t  ə  ! * * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * **l* ˈ  ɔ  ø  t  ə  ! * * m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː *m**ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː * **l* ˈ  ɔ  ø *t* ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː    *l* ˈ  ɔ  ø *t* ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː    *l* ˈ  ɔ  ø *t**ə* !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː    *l* ˈ  ɔ  ø *t**ə* !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø *t**ə* !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə* !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə* !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə**!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t *ə**!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s**t** * k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t** * k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!*    m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!** * m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!** * m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə *!** **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n    *n**ˈ**ɑ**ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə    *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s* v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ *n** * n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː *m* ə     ɪ  s  t     k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n *ˈ* ɑ  ː *m* ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  ! * **m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !    *m* ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n *ˈ* ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n *ˈ**ɑ* ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ**a**ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a**ɪ**n*    n  ˈ  ɑ *ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a**ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ* n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ**n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a *ɪ**n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n** * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n *ˈ* ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * **n**ˈ**ɑ**ː* m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n    *n**ˈ**ɑ**ː* m  ə * **ɪ**s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n    *n* ˈ *ɑ**ː* m  ə * * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n    *n* ˈ  ɑ *ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ *ː* m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n *ˈ* ɑ *ː**m**ə*   *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ *ː**m* ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ *ː**m**ə*   *ɪ* s *t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː *m**ə*   *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː *m**ə*   *ɪ* s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː *m**ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n *ˈ* ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m *ə*    ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m *ˈ* a  ɪ  n    *n**ˈ* ɑ  ː  m *ə** * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a* ɪ  n     n *ˈ* ɑ  ː  m *ə** * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ *a* ɪ  n     n  ˈ  ɑ  ː  m  ə * * ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə * **ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n *ˈ* ɑ  ː  m  ə * **ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ *n*    n  ˈ  ɑ  ː  m  ə * **ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə    *ɪ**s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s* t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * * n  ˈ  ɑ  ː  m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n * **n* ˈ  ɑ  ː  m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ *s**t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t*    k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t*    k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s *t** * k *ɾ* ˈ  ɪ  s     s *v* ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ* ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k *ɾ* ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k**ɾ**ˈ**ɪ* s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ* ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ**ɪ* s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ**ɪ**s*    s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ *ˈ**ɪ**s*    s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ *ɪ**s*    s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ *ɪ**s*    s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ *ɪ**s** * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ *s** * s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s * * s *v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k  ɾ  ˈ  ɪ  s * **s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * * k  ɾ  ˈ  ɪ  s * **s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s * **s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t * **k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v* ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s    *s**v**ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t    *k* ɾ  ˈ  ɪ  s     s  v *ˈ**e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ* e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ**e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v *ˈ**e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ *e**ː* n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e *ː**n**a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n* a *ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a**ɪ*
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː *n**a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n *a* ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ *ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l *ˈ**ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ *ɔ* ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ *s*    s  v  ˈ  e  ː  n  a *ɪ*
+ h  ˈ  a  l *o**ː** * l *ˈ* ɔ  ø *t**ə**!*    m  ˈ  a  ɪ  n     n *ˈ**ɑ* ː  m  ə * * ɪ  s *t** * k  ɾ  ˈ *ɪ**s** * s  v  ˈ *e* ː  n  a  ɪ 
+ h  ˈ  a  l  o  ː     l  ˈ  ɔ  ø  t  ə  !     m  ˈ  a  ɪ  n     n  ˈ  ɑ  ː  m  ə     ɪ  s  t     k  ɾ  ˈ  ɪ  s     s  v  ˈ  e  ː  n  a  ɪ 
+Generated audio saved to output.wav

@@ -27,12 +27,71 @@ def pad_weight_(w: nn.Embedding | nn.Linear, multiple: int):
         raise ValueError(f"Unsupported weight type: {type(w)}")
 
 
-def get_device() -> torch.device:
+def get_device(prefer: str = "fastest", debug: bool = True) -> torch.device:
+    """
+    Select CUDA device based on preference: 'fastest' or 'memory'.
+
+    Args:
+        prefer (str): Device selection preference ('fastest' or 'memory'). Default: 'fastest'.
+        debug (bool): If True, prints debug information about CUDA devices. Default: False.
+
+    Returns:
+        torch.device: Selected device based on preference.
+    """
     if torch.cuda.is_available():
-        return torch.device(torch.cuda.current_device())
+        device_count = torch.cuda.device_count()
+        if debug:
+            print(f"CUDA devices available: {device_count}")
+
+        devices_info = []
+
+        for device_idx in range(device_count):
+            props = torch.cuda.get_device_properties(device_idx)
+            devices_info.append({
+                "idx": device_idx,
+                "name": props.name,
+                "compute_capability": (props.major, props.minor),
+                "multi_processor_count": props.multi_processor_count,
+                "total_memory": props.total_memory,
+            })
+
+            if debug:
+                cc = f"{props.major}.{props.minor}"
+                mem_gb = props.total_memory / (1024 ** 3)
+                print(f"Device {device_idx}: {props.name}, Compute Capability: {cc}, "
+                      f"Multiprocessors: {props.multi_processor_count}, "
+                      f"Memory: {mem_gb:.2f} GB")
+
+        if prefer == "memory":
+            # Select GPU with the most memory
+            selected_device = max(devices_info, key=lambda d: d["total_memory"])
+        elif prefer == "fastest":
+            # Select GPU with highest compute capability, multiprocessor count, then memory
+            selected_device = max(
+                devices_info,
+                key=lambda d: (
+                    d["compute_capability"],
+                    d["multi_processor_count"],
+                    d["total_memory"],
+                ),
+            )
+        else:
+            raise ValueError(f"Unknown preference '{prefer}'. Use 'fastest' or 'memory'.")
+
+        if debug:
+            print(f"Selected device {selected_device['idx']}: {selected_device['name']}")
+
+        return torch.device(f"cuda:{selected_device['idx']}")
+
     # MPS breaks for whatever reason. Uncomment when it's working.
     # if torch.mps.is_available():
+    #     if debug:
+    #         print("Selecting MPS device (Apple Silicon).")
     #     return torch.device("mps")
+
+    if debug:
+        print("No CUDA devices available. Falling back to CPU.")
+
     return torch.device("cpu")
 
 

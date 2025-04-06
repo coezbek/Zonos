@@ -81,8 +81,18 @@ class Zonos(nn.Module):
 
         sd = model.state_dict()
         with safetensors.safe_open(model_path, framework="pt") as f:
+            print(f"🔹 Found {len(f.keys())} keys in model.safetensors:")
             for k in f.keys():
-                sd[k] = f.get_tensor(k)
+                tensor = f.get_tensor(k)
+                print(f"  ▶ Key: {k}, Shape: {tensor.shape}, Dtype: {tensor.dtype}")
+
+                # If you want to inspect specific tensors:
+                if "phoneme_embedder" in k or "prefix_conditioner" in k:
+                    print(f"    🔎 Sample Values: {tensor.flatten()[:5]}")
+
+                # Load into model state
+                sd[k] = tensor
+
         model.load_state_dict(sd)
 
         return model
@@ -235,7 +245,7 @@ class Zonos(nn.Module):
         # Use CUDA Graphs if supported, and torch.compile otherwise.
         cg = self.can_use_cudagraphs()
         decode_one_token = self._decode_one_token
-        decode_one_token = torch.compile(decode_one_token, dynamic=True, disable=cg or disable_torch_compile)
+        decode_one_token = torch.compile(decode_one_token, dynamic=True, disable=True or cg or disable_torch_compile)
 
         unknown_token = -1
         audio_seq_len = prefix_audio_len + max_new_tokens

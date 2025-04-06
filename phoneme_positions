@@ -1,0 +1,16 @@
+
+hˈaloː lˈɔøtə! mˈaɪn nˈɑːmə ɪst kɾˈɪs svˈeːnaɪ
+
+8 => 1.00 von 2.8 == 86 (150)
+16 => 1.5 => 129 (193)
+33 => 1.98 => 170 (234)
+39 => 2.25 => 193 (257)
+
+86 frames per second = 
+
+Phoneme 8 -> generation started at 150
+Phoneme 16 -> 193
+Phoneme 33 -> 234
+Phoneme 39 -> 257
+
+PYTHONUNBUFFERED=1 uv run zonos_cli.py --text "Hallo Leute! Mein Name ist Chris Sweeney" --language de > out.txt

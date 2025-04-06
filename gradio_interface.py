@@ -177,7 +177,48 @@ def generate_audio(
         device=device,
         unconditional_keys=unconditional_keys,
     )
-    conditioning = selected_model.prepare_conditioning(cond_dict)
+
+    # ---- NEW EXPLICIT UNCONDITIONAL DICTIONARY ----
+    unconditional_emotion_tensor = torch.tensor(
+        [0, 0, 0, 0, 0, 0, 0, 1.0], device=device  # clearly neutral emotion
+    )
+
+    uncond_dict = make_cond_dict(
+        text=text,  # text stays identical
+        language=language,
+        speaker=None if "speaker" in unconditional_keys else SPEAKER_EMBEDDING,
+        emotion=None if "emotion" in unconditional_keys else unconditional_emotion_tensor,
+        vqscore_8=None if "vqscore_8" in unconditional_keys else vq_tensor,
+        fmax=None if "fmax" in unconditional_keys else fmax,
+        pitch_std=None if "pitch_std" in unconditional_keys else 5.0,
+        speaking_rate=None if "speaking_rate" in unconditional_keys else speaking_rate,
+        dnsmos_ovrl=None if "dnsmos_ovrl" in unconditional_keys else dnsmos_ovrl,
+        speaker_noised=None if "speaker_noised" in unconditional_keys else speaker_noised_bool,
+        device=device,
+        unconditional_keys=unconditional_keys,
+    )
+
+    # ---- Pass BOTH dicts explicitly to prepare_conditioning ----
+    conditioning = selected_model.prepare_conditioning(cond_dict, uncond_dict)
+
+    # conditioning = selected_model.prepare_conditioning(cond_dict)
+
+    import json
+
+    # This function recursively converts tensors to lists:
+    def tensors_to_lists(data):
+        if isinstance(data, torch.Tensor):
+            return data.cpu().tolist()
+        elif isinstance(data, dict):
+            return {k: tensors_to_lists(v) for k, v in data.items()}
+        elif isinstance(data, list):
+            return [tensors_to_lists(x) for x in data]
+        elif isinstance(data, tuple):
+            return tuple(tensors_to_lists(x) for x in data)
+        else:
+            return data
+
+    # print(json.dumps(tensors_to_lists(conditioning), indent=2))
 
     estimated_generation_duration = 30 * len(text) / 400
     estimated_total_steps = int(estimated_generation_duration * 86)

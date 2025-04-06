@@ -15,9 +15,18 @@ class DACAutoencoder:
         self.sampling_rate = self.dac.config.sampling_rate
 
     def preprocess(self, wav: torch.Tensor, sr: int) -> torch.Tensor:
+        """Resample and left-pad the input waveform for decoding with the DACAutoencoder."""
+        do_left_pad = False
+
+        print(f"Input sampling rate: {sr}")
         wav = torchaudio.functional.resample(wav, sr, 44_100)
-        right_pad = math.ceil(wav.shape[-1] / 512) * 512 - wav.shape[-1]
-        return torch.nn.functional.pad(wav, (0, right_pad))
+        if do_left_pad:
+            left_pad = math.ceil(wav.shape[-1] / 512) * 512 - wav.shape[-1]
+            return torch.nn.functional.pad(wav, (left_pad, 0), value=0)
+        else:
+            right_pad = math.ceil(wav.shape[-1] / 512) * 512 - wav.shape[-1]
+            print(f"Right pad: {right_pad}")
+            return torch.nn.functional.pad(wav, (0, right_pad), value=0)
 
     def encode(self, wav: torch.Tensor) -> torch.Tensor:
         return self.dac.encode(wav).audio_codes
