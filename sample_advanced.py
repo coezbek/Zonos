@@ -53,7 +53,7 @@ def main():
     # Create and explicitly set the conditioning dictionary.
     # Note: make_cond_dict initializes with basic keys.
     cond_dict = make_cond_dict(
-        text="Hello from Zonos, the state of the art text to speech model.",
+        text="Hello from Zonos, the state of the art text to speech model. It can generate high-quality audio from text with various voice characteristics.",
         speaker=speaker_embedding,
         language="en-us",
         emotion=[1.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.2], # [Happiness, Sadness, Disgust, Fear, Surprise, Anger, Other, Neutral]
