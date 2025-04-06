@@ -216,6 +216,7 @@ def get_backend(language: str) -> "EspeakBackend":
     from phonemizer.backend import EspeakBackend
 
     logger = logging.getLogger("phonemizer")
+    logger.setLevel(logging.WARNING)
     backend = EspeakBackend(
         language,
         preserve_punctuation=True,
@@ -224,9 +225,10 @@ def get_backend(language: str) -> "EspeakBackend":
         punctuation_marks=_punctuation,
         logger=logger,
     )
-    logger.setLevel(logging.ERROR)
     return backend
 
+# Cache for warnings to avoid duplicate messages
+warning_cache = set()
 
 def phonemize(texts: list[str], languages: list[str]) -> list[str]:
     """
@@ -250,8 +252,6 @@ def phonemize(texts: list[str], languages: list[str]) -> list[str]:
 
     batch_phonemes = []
     for text, language in zip(texts, languages):
-        logger.debug(f"Processing text: {text} (Language: {language})")
-
         # Split text into normal parts and phonemized segments
         segments = re.split(r'(:phonemize/.*?/)', text)
         phon_parts = []
@@ -261,19 +261,24 @@ def phonemize(texts: list[str], languages: list[str]) -> list[str]:
                 # Extract manual IPA 
                 ipa_segment = seg[len(':phonemize/'):-1] #.replace(" ", "") # and remove spaces # Disabled CÖ
                 phon_parts.append(ipa_segment)
-                logger.debug(f"Manual IPA detected: {ipa_segment}")
+                # logger.debug(f"Manual IPA detected: {ipa_segment}")
 
             elif seg:
                 # Phonemize using eSpeak
                 backend = get_backend(language)
                 ph = backend.phonemize([seg], strip=True)[0]
                 phon_parts.append(ph)
-                logger.debug(f"Phonemized '{seg}' -> '{ph}'")
+                # logger.debug(f"Phonemized '{seg}' -> '{ph}'")
 
         # Combine final phoneme output
-        final_phonemes = "".join(phon_parts)
-        batch_phonemes.append(final_phonemes)
-        logger.info(f"Final phoneme output: {final_phonemes}")
+        phonemes = "".join(phon_parts)
+        batch_phonemes.append(phonemes)
+        global warning_cache
+        if '??' in phonemes and phonemes not in warning_cache:
+            warning_cache.add(phonemes)
+            backend.logger.warning(f"⚠️  Espeak failed to phonemize, returned at least one phoneme as '??':\nText: {text} -> Phonemes: {phonemes}")
+        else:
+            backend.logger.debug(f"Text: {text} ({language}) -> Phonemes: {phonemes}")
 
     return batch_phonemes
 

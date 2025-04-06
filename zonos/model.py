@@ -14,7 +14,7 @@ from zonos.conditioning import PrefixConditioner
 from zonos.config import InferenceParams, ZonosConfig
 from zonos.sampling import sample_from_logits
 from zonos.speaker_cloning import SpeakerEmbeddingLDA
-from zonos.utils import DEFAULT_DEVICE, find_multiple, pad_weight_
+from zonos.utils import DEFAULT_DEVICE, find_multiple, pad_weight_, hub_download
 
 DEFAULT_BACKBONE_CLS = next(iter(BACKBONES.values()))
 
@@ -58,8 +58,8 @@ class Zonos(nn.Module):
     def from_pretrained(
         cls, repo_id: str, revision: str | None = None, device: str = DEFAULT_DEVICE, **kwargs
     ) -> "Zonos":
-        config_path = hf_hub_download(repo_id=repo_id, filename="config.json", revision=revision, local_files_only=False)
-        model_path = hf_hub_download(repo_id=repo_id, filename="model.safetensors", revision=revision, local_files_only=False)
+        config_path = hub_download(repo_id=repo_id, filename="config.json", revision=revision)
+        model_path = hub_download(repo_id=repo_id, filename="model.safetensors", revision=revision)
         return cls.from_local(config_path, model_path, device, **kwargs)
 
     @classmethod
@@ -131,17 +131,17 @@ class Zonos(nn.Module):
         We only recapture if the batch size changes.
         """
         # TODO: support cfg_scale==1
-        if cfg_scale == 1.0:
-            hidden_states = self.embed_codes(input_ids)
-            return self._compute_logits(hidden_states, inference_params, cfg_scale)
+        # if cfg_scale == 1.0:
+        #    hidden_states = self.embed_codes(input_ids)
+        #    return self._compute_logits(hidden_states, inference_params, cfg_scale)
 
-        bsz = input_ids.size(0)
-
+        # Transformer does not support cudagraphs:
         if not allow_cudagraphs or input_ids.device.type != "cuda":
             hidden_states_local = self.embed_codes(input_ids)
             hidden_states_local = hidden_states_local.repeat(2, 1, 1)
             return self._compute_logits(hidden_states_local, inference_params, cfg_scale)
 
+        bsz = input_ids.size(0)
         need_capture = (self._cg_graph is None) or (self._cg_batch_size != bsz)
 
         if need_capture:
@@ -302,9 +302,7 @@ class Zonos(nn.Module):
         # For multiple batches, we can't use frame.masked_scatter_(frame == unknown_token, next_token) 
         # because it is continuing one-by-one for each unmasked entry
         # going across batches
-        mask = (frame == unknown_token)
-        if mask.any():
-            frame.masked_scatter_(mask, next_token[mask])
+        delayed_codes[..., offset : offset + 1] = torch.where(frame == unknown_token, next_token, frame)
 
         # Update inference parameters to account for the initial tokens
         prefix_length = prefix_conditioning.shape[1] + prefix_audio_len + 1
@@ -314,7 +312,7 @@ class Zonos(nn.Module):
         # Create a logit bias that forbids codebooks 1..8 from generating an EOS token
         logit_bias = torch.zeros_like(logits)
         logit_bias[:, 1:, self.eos_token_id] = -torch.inf  # only allow codebook 0 to predict EOS
-        logit_bias[:, 0, self.eos_token_id] -= torch.log(torch.tensor(2.0, device=logits.device)) # Make EOS less likely because audio often is cut off
+        logit_bias[:, 0, self.eos_token_id] -= torch.log(torch.tensor(8.0, device=logits.device)) # Make EOS less likely because audio often is cut off
 
         # Track which samples have stopped (hit EOS) and how many steps remain
         stopping = torch.zeros(batch_size, dtype=torch.bool, device=device)
@@ -366,9 +364,7 @@ class Zonos(nn.Module):
 
             # Insert the newly sampled tokens into the delayed_codes array
             frame = delayed_codes[..., offset : offset + 1]
-            mask = (frame == unknown_token)
-            if mask.any():
-                frame.masked_scatter_(mask, next_token[mask])
+            delayed_codes[..., offset : offset + 1] = torch.where(frame == unknown_token, next_token, frame)
 
             inference_params.seqlen_offset += 1
             inference_params.lengths_per_sample[:] += 1

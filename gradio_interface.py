@@ -197,6 +197,8 @@ def generate_audio(
     )
 
     assert len(codes) == 1, "Batch size should be 1"
+
+    # Adapt to batching changes
     codes = codes[0].unsqueeze(0)
 
     wav_out = selected_model.autoencoder.decode(codes).cpu().detach()

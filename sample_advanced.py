@@ -87,6 +87,7 @@ def main():
             "temperature": 1.0,
         },
         "progress_bar": True,
+        "disable_torch_compile": False, # Caution: For single samples compilation will not help with speed-up
     }
     
     # For reproducibility.

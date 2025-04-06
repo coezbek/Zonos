@@ -11,5 +11,5 @@ wheels/
 
 # Misc.
 .ipynb_checkpoints/
-/*.wav
-.bash_history
+*.wav
+transcripts.json
