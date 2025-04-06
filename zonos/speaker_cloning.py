@@ -5,9 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchaudio
-from huggingface_hub import hf_hub_download
 
-from zonos.utils import DEFAULT_DEVICE
+from zonos.utils import DEFAULT_DEVICE, hub_download
 
 
 class logFbankCal(nn.Module):
@@ -388,11 +387,11 @@ class SpeakerEmbedding(nn.Module):
 class SpeakerEmbeddingLDA(nn.Module):
     def __init__(self, device: str = DEFAULT_DEVICE):
         super().__init__()
-        spk_model_path = hf_hub_download(
+        spk_model_path = hub_download(
             repo_id="Zyphra/Zonos-v0.1-speaker-embedding",
             filename="ResNet293_SimAM_ASP_base.pt",
         )
-        lda_spk_model_path = hf_hub_download(
+        lda_spk_model_path = hub_download(
             repo_id="Zyphra/Zonos-v0.1-speaker-embedding",
             filename="ResNet293_SimAM_ASP_base_LDA-128.pt",
         )
