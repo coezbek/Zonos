@@ -13,88 +13,142 @@ def load_audio(file_path, model):
     wav = model.autoencoder.preprocess(wav, sr)
     return model.autoencoder.encode(wav.unsqueeze(0).to(device, dtype=torch.float32))
 
-def generate_audio(args, model, speaker_embedding, prefix_audio_codes):
+def generate_audio(args, model, speaker_embedding, prefix_audio_codes, prefix_audio_text):
     """Generates speech for multiple texts in a batch."""
-    torch.manual_seed(args.seed)
+
+    if args.audio_aesthetics:
+        from audiobox_aesthetics.infer import initialize_predictor
+        predictor = initialize_predictor()
+
+    # Apply text repetition
+    args.text = [text for text in args.text for _ in range(args.text_repeat)]
     batch_size = len(args.text)
-    
-    # Expand speaker embedding for batch size
-    # speaker_embedding = speaker_embedding.expand(batch_size, speaker_embedding.size(1), speaker_embedding.size(2))
-    # speaker_embedding = speaker_embedding.expand(batch_size, -1)
 
-    # Create conditioning dictionaries for each text
-    cond_dict = make_cond_dict(
-          text=args.text,
-          speaker=speaker_embedding,
-          language=args.language,
-          emotion=args.emotion,
-          fmax=args.fmax,
-          pitch_std=args.pitch_std,
-          speaking_rate=args.speaking_rate,
-          vqscore_8=args.vqscore_8,
-          ctc_loss=args.ctc_loss,
-          dnsmos_ovrl=args.dnsmos_ovrl,
-          speaker_noised=args.speaker_noised,
-          unconditional_keys=args.unconditional_keys,
-      )
+    # Expand prefix audio codes for batch size
+    prefix_audio_codes = prefix_audio_codes.repeat(batch_size // prefix_audio_codes.shape[0], 1, 1)
 
-    prefix_conditioning = model.prepare_conditioning(cond_dict)
+    # Expand prefix audio text for batch size
+    prefix_audio_text = prefix_audio_text * (batch_size // len(prefix_audio_text))
+
+    text = [prefix_audio_text[i] + " " + args.text[i] for i in range(batch_size)]
+
+    overall_quality = []
+
+    # For each repetition
+    for repeat in range(args.batch_repeat):
+
+        torch.manual_seed(args.seed + repeat)
         
-    # Expand prefix_audio_codes to batch size
-    prefix_audio_codes = prefix_audio_codes.expand(batch_size, prefix_audio_codes.size(1), prefix_audio_codes.size(2))
+        # Expand speaker embedding for batch size
+        # speaker_embedding = speaker_embedding.expand(batch_size, speaker_embedding.size(1), speaker_embedding.size(2))
+        # speaker_embedding = speaker_embedding.expand(batch_size, -1)
 
-    print ("conditioning.size(): ", prefix_conditioning.size())
-    print ("speaker_embedding.size(): ", speaker_embedding.size())
-    print ("prefix_audio_codes.size(): ", prefix_audio_codes.size())
-    
-    # Generate codes
-    codes = model.generate(
-        prefix_conditioning,
-        audio_prefix_codes=prefix_audio_codes,
-        max_new_tokens=args.max_new_tokens,
-        cfg_scale=args.cfg_scale,
-        batch_size=batch_size,
-        sampling_params={
-            "top_p": args.top_p,
-            "top_k": args.top_k,
-            "min_p": args.min_p,
-            "linear": args.linear,
-            "conf": args.conf,
-            "quad": args.quad,
-            "repetition_penalty": args.repetition_penalty,
-            "repetition_penalty_window": args.repetition_penalty_window,
-            "temperature": args.temperature,
-        },
-        progress_bar=args.progress_bar,
-    )
+        # Create conditioning dictionaries for each text
+        cond_dict = make_cond_dict(
+            text=text,
+            speaker=speaker_embedding,
+            language=args.language,
+            emotion=args.emotion,
+            fmax=args.fmax,
+            pitch_std=args.pitch_std,
+            speaking_rate=args.speaking_rate,
+            vqscore_8=args.vqscore_8,
+            ctc_loss=args.ctc_loss,
+            dnsmos_ovrl=args.dnsmos_ovrl,
+            speaker_noised=args.speaker_noised,
+            unconditional_keys=args.unconditional_keys,
+        )
+        # print ("cond_dict: ", cond_dict)
 
-    # Decode and save batch results
-    # wavs = model.autoencoder.decode(codes).cpu()
+        prefix_conditioning = model.prepare_conditioning(cond_dict)
 
-    for i, code in enumerate(codes):
-        # Ensure code has the correct dimensions: [1, num_codebooks, sequence_length]
-        code = code.unsqueeze(0) if code.dim() == 2 else code
-        # Decode the code
-        decoded_audio = model.autoencoder.decode(code).cpu()
+        print ("conditioning.size(): ", prefix_conditioning.size())
+        print ("speaker_embedding.size(): ", speaker_embedding.size())
+        print ("prefix_audio_codes.size(): ", prefix_audio_codes.size())
+       
+        # Generate codes
+        codes = model.generate(
+            prefix_conditioning,
+            audio_prefix_codes=prefix_audio_codes,
+            max_new_tokens=args.max_new_tokens,
+            cfg_scale=args.cfg_scale,
+            batch_size=batch_size,
+            disable_torch_compile=False,
+            sampling_params={
+                "top_p": args.top_p,
+                "top_k": args.top_k,
+                "min_p": args.min_p,
+                "linear": args.linear,
+                "conf": args.conf,
+                "quad": args.quad,
+                "repetition_penalty": args.repetition_penalty,
+                "repetition_penalty_window": args.repetition_penalty_window,
+                "temperature": args.temperature,
+            },
+            progress_bar=args.progress_bar,
+        )
 
-        # Save the decoded audio
-        output_file = f"{args.output.rstrip('.wav')}_{i}.wav"
-        torchaudio.save(output_file, decoded_audio.squeeze(0), model.autoencoder.sampling_rate)
-        print(f"Generated audio saved to {output_file}")
+        # Decode and save batch results
+        # wavs = model.autoencoder.decode(codes).cpu()
 
-    #for i, wav in enumerate(wavs):
-    #    output_file = f"{args.output.rstrip('.wav')}_{i}.wav"
-    #    torchaudio.save(output_file, wav, model.autoencoder.sampling_rate)
-    #    print(f"Generated audio saved to {output_file}")
+        batch_quality = []
+
+        for i, code in enumerate(codes):
+            # Ensure code has the correct dimensions: [1, num_codebooks, sequence_length]
+            code = code.unsqueeze(0) if code.dim() == 2 else code
+
+            # print(f"Code shape: {code.shape}")
+            # Decode the code
+            decoded_audio = model.autoencoder.decode(code).cpu()
+
+            # Determine the padding lengths
+            pad_i = len(str(len(args.text)-1))  # Number of digits in max_i
+            if args.batch_repeat == 1:
+                output_file = f"{args.output.rstrip('.wav')}_{i:0{pad_i}d}.wav"
+            else:
+                batch_then_text_repeat = False
+                pad_repeat = len(str(args.batch_repeat-1))  # Number of digits in max_repeat
+                if batch_then_text_repeat:
+                    output_file = f"{args.output.rstrip('.wav')}_{repeat:0{pad_repeat}d}_{i:0{pad_i}d}.wav"
+                else:
+                    output_file = f"{args.output.rstrip('.wav')}_{i:0{pad_i}d}_{repeat:0{pad_repeat}d}.wav"
+
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+            # Save the decoded audio
+            wav = decoded_audio.squeeze(0)
+            sr = model.autoencoder.sampling_rate
+            torchaudio.save(output_file, wav, sr)
+
+            if args.audio_aesthetics:
+                d = predictor.forward([{"path": wav, "sample_rate": sr}])[0]
+                batch_quality.append(d)
+                overall_quality.append(d)
+
+                print(f"Generated audio saved to {output_file} | Audiobox Aesthetics: {quality_string(d)}")
+            else:
+                print(f"Generated audio saved to {output_file}")
+
+        if args.audio_aesthetics and len(codes) > 1:
+            print(f"Batch Audiobox Aesthetics:   {quality_string(batch_quality)}")
+
+    if args.audio_aesthetics and args.batch_repeat > 1:
+        print(f"Overall Audiobox Aesthetics: {quality_string(overall_quality)}")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Generate speech with Zonos CLI (Batch Mode).")
     parser.add_argument("--text", nargs="+", required=True, help="List of texts to generate speech for.")
     parser.add_argument("--language", required=True, help="Language code (e.g., en-us, de).")
     parser.add_argument("--reference_audio", default="assets/exampleaudio.mp3", help="Path to reference speaker audio.")
-    parser.add_argument("--prefix_audio", default=None, help="Path to prefix audio (default: 100ms silence).")
+    parser.add_argument("--prefix_audio", "--audio_prefix", nargs="+", default=None, help="Path to prefix audio (default: 350ms silence).")
     parser.add_argument("--output", default="output.wav", help="Output wav file prefix.")
     parser.add_argument("--seed", type=int, default=423, help="Random seed for reproducibility.")
+    parser.add_argument("--batch_repeat", type=int, default=1, help="Number of times to repeat the entire batch generation (seed is incremented by 1).")
+    parser.add_argument("--text_repeat", type=int, default=1, help="Number of times to repeat each text in the same batch.")
+    parser.add_argument("--audio_aesthetics", action='store_true', help="Output audiobox-aesthetics per file.")
+    parser.add_argument('--verbose', action='store_true', help="Print verbose output.")
  
     # Conditioning parameters
     parser.add_argument("--emotion", nargs=8, type=float, default=[1.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.2], help="Emotion vector (Happiness, Sadness, Disgust, Fear, Surprise, Anger, Other, Neutral).")
