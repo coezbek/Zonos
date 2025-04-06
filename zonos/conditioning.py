@@ -214,6 +214,7 @@ def phonemize(texts: list[str], languages: list[str]) -> list[str]:
         backend = get_backend(language)
         phonemes = backend.phonemize([text], strip=True)
         batch_phonemes.append(phonemes[0])
+        logging.debug(f"Text: {text} -> Phonemes: {phonemes[0]}")
 
     return batch_phonemes
 
