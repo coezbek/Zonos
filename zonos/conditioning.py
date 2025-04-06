@@ -202,7 +202,7 @@ def get_backend(language: str) -> "EspeakBackend":
         language_switch="remove-flags",
         logger=logger,
     )
-    logger.setLevel(logging.ERROR)
+    logger.setLevel(logging.WARNING)
     return backend
 
 
