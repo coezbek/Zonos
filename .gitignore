@@ -13,3 +13,4 @@ wheels/
 .ipynb_checkpoints/
 /*.wav
 .bash_history
+.voices
