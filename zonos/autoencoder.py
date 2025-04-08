@@ -201,7 +201,9 @@ class DACAutoencoder:
             wav[:,  :blocksize] *= torch.linspace(0, 1, blocksize, device=wav.device).unsqueeze(0) # fade-in
 
              # fade-out logarithmically from 10**0 to 10**-10 over num_blocks * blocksize samples
-            wav[:, -(num_blocks * blocksize):] *= torch.logspace(0, -10, num_blocks * blocksize, device=wav.device).unsqueeze(0)
+            num_blocks = min((wav.shape[1] // blocksize) // 4, 20) # Clamp to 20/86 = 0.23 seconds or 1/4 of the audio at most
+            if num_blocks > 0:
+                wav[:, -(num_blocks * blocksize):] *= torch.logspace(0, -10, num_blocks * blocksize, device=wav.device).unsqueeze(0)
 
             results.append(wav)
         
