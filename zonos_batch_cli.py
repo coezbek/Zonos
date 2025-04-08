@@ -160,21 +160,11 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes, prefix_au
                 progress_bar=args.progress_bar,
             )
 
-            # Decode and save batch results
-            # wavs = model.autoencoder.decode(codes).cpu()
-
             batch_quality = []
 
             for i, code in enumerate(codes):
 
                 i = chunk_i + i  # Adjust index for the original text list
-
-                # Ensure code has the correct dimensions: [1, num_codebooks, sequence_length]
-                code = code.unsqueeze(0) if code.dim() == 2 else code
-
-                # print(f"Code shape: {code.shape}")
-                # Decode the code
-                decoded_audio = model.autoencoder.decode(code).cpu()
 
                 # Determine the padding lengths
                 pad_i = len(str(len(args.text)-1))  # Number of digits in max_i
@@ -193,8 +183,10 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes, prefix_au
                     os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
                 # Save the decoded audio
-                wav = decoded_audio.squeeze(0)
+                wav = model.autoencoder.codes_to_wavs(code)[0]
+
                 sr = model.autoencoder.sampling_rate
+
                 torchaudio.save(output_file, wav, sr)
 
                 if args.audio_aesthetics:
