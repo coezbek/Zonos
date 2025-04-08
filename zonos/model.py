@@ -267,7 +267,7 @@ class Zonos(nn.Module):
         device = self.device
 
         # Check feasibility of CUDA Graphs and possibly torch.compile
-        cg = self.can_use_cudagraphs()
+        cg = self.can_use_cudagraphs() # Only true for Hybrid model with mamba-ssm on CUDA
 
         # Compile the _decode_one_token function
         decode_one_token = self._decode_one_token
