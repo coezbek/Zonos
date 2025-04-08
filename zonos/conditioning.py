@@ -460,7 +460,7 @@ def make_cond_dict(
 
     # Make language lower-case and replace _ with - for compatibility
     language = language.lower().replace("_", "-")
-    assert language in supported_language_codes, "Please pick a supported language"
+    assert language in supported_language_codes, f"Language code {language} isn't supported. Please pick a supported language code from the list: " + str(supported_language_codes)
     language_code_to_id = {lang: i for i, lang in enumerate(supported_language_codes)}
     language_id = language_code_to_id[language]
 
