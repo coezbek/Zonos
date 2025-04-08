@@ -2,11 +2,21 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import logging
+from huggingface_hub import hf_hub_download
 
 def find_multiple(n: int, k: int) -> int:
     if k == 0 or n % k == 0:
         return n
     return n + k - (n % k)
+
+def hub_download(repo_id: str, filename: str, revision: str | None = None):
+    """
+    Load HuggingFace model. Prefer local files if available.
+    """
+    try:
+        return hf_hub_download(repo_id=repo_id, filename=filename, revision=revision, local_files_only=True)
+    except Exception as e:
+        return hf_hub_download(repo_id=repo_id, filename=filename, revision=revision)
 
 
 def pad_weight_(w: nn.Embedding | nn.Linear, multiple: int):
@@ -49,7 +59,7 @@ def set_device(prefer):
     else:
         raise ValueError("Invalid preference type. Must be a string or torch.device.")
 
-def get_device(prefer: str = "fastest") -> torch.device:
+def get_device(prefer: str = "memory") -> torch.device:
     """
     Select CUDA device based on:
       - Minimum Compute Capability of 7.0 (otherwise fallback to CPU).
@@ -136,6 +146,6 @@ def __getattr__(name):
     if name == 'DEFAULT_DEVICE':
         global _default_device
         if _default_device is None:
-            _default_device = get_device("fastest")
+            _default_device = get_device("memory")
         return _default_device
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

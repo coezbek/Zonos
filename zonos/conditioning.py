@@ -216,6 +216,7 @@ def get_backend(language: str) -> "EspeakBackend":
     from phonemizer.backend import EspeakBackend
 
     logger = logging.getLogger("phonemizer")
+    logger.setLevel(logging.WARNING)
     backend = EspeakBackend(
         language,
         preserve_punctuation=True,
@@ -224,9 +225,10 @@ def get_backend(language: str) -> "EspeakBackend":
         punctuation_marks=_punctuation,
         logger=logger,
     )
-    logger.setLevel(logging.ERROR)
     return backend
 
+# Cache for warnings to avoid duplicate messages
+warning_cache = set()
 
 def phonemize(texts: list[str], languages: list[str]) -> list[str]:
     """
@@ -247,7 +249,7 @@ def phonemize(texts: list[str], languages: list[str]) -> list[str]:
     texts = clean(texts, languages)  # Preprocessing step
     logger = logging.getLogger("phonemizer")
 
-    # Updated regex to support new and old syntax
+    # Match both :phonemize(grapheme)/IPA/ or :phonemize/IPA/
     pattern = r'(:phonemize(?:\((.*?)\))?/([^/]+)/)'
 
     batch_phonemes = []
@@ -277,9 +279,15 @@ def phonemize(texts: list[str], languages: list[str]) -> list[str]:
             else:
                 i += 1
 
-        final_phonemes = "".join(phon_parts)
-        batch_phonemes.append(final_phonemes)
-        logger.info(f"Final phoneme output: {final_phonemes}")
+        # Combine final phoneme output
+        phonemes = "".join(phon_parts)
+        batch_phonemes.append(phonemes)
+        global warning_cache
+        if '??' in phonemes and phonemes not in warning_cache:
+            warning_cache.add(phonemes)
+            backend.logger.warning(f"⚠️  Espeak failed to phonemize, returned at least one phoneme as '??':\nText: {text} -> Phonemes: {phonemes}")
+        else:
+            backend.logger.debug(f"Text: {text} ({language}) -> Phonemes: {phonemes}")
 
     return batch_phonemes
 

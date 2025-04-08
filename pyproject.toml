@@ -21,8 +21,9 @@ dependencies = [
     "gradio>=5.15.0",
     "pyloudnorm>=0.1.1",
     "webrtcvad>=2.0.10",
-    "audiobox-aesthetics>=0.0.3",
     "xxhash>=3.5.0",
+    "pytictoc>=1.5.3",
+    "audiobox-aesthetics",
 ]
 
 # These are technically optional, but mamba-ssm is required to run hybrid models.
@@ -38,6 +39,9 @@ include = ["zonos"]
 
 [tool.uv]
 no-build-isolation-package = ["flash-attn", "mamba-ssm", "causal-conv1d"]
+
+[tool.uv.sources]
+audiobox-aesthetics = { git = "https://github.com/coezbek/audiobox-aesthetics.git" }
 
 [tool.ruff]
 line-length = 120
