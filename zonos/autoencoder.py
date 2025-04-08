@@ -7,6 +7,7 @@ from transformers.models.dac import DacModel
 
 # Setup logger
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 class DACAutoencoder:
     def __init__(self):
@@ -41,6 +42,7 @@ class DACAutoencoder:
         return self.encode(wav.unsqueeze(0))
 
     def decode(self, codes: torch.Tensor) -> torch.Tensor:
+        assert codes.shape[1] == self.num_codebooks, f"Expected {self.num_codebooks} codebooks, got {codes.shape[1]}"
         with torch.autocast(self.dac.device.type, torch.float16, enabled=self.dac.device.type != "cpu"):
             return self.dac.decode(audio_codes=codes).audio_values.unsqueeze(1).float()
 
@@ -158,7 +160,7 @@ class DACAutoencoder:
             logger.debug(f"Adding gain to normalize loudness: {gain:.2f} dB")
             return audio * gain
         except Exception as e:
-            logger.error(f"Error normalizing loudness (audio too short?): {e}")
+            logger.warning(f"Error normalizing loudness (audio too short?): {e}")
             return audio
         
     def codes_to_wavs(self, codes: torch.Tensor | list[torch.Tensor]) -> None:
@@ -170,7 +172,7 @@ class DACAutoencoder:
                   or a list of tensors each with shape [1, num_codebooks, num_codes] or [num_codebooks, num_codes]
         """
        
-        # Handle different input types for codes
+        # Handle different input types for codes and ensure we have a list of tensors of shape [1, num_codebooks, num_codes]
         if isinstance(codes, list):
             # Ensure each code has batch dimension
             code_list = []
@@ -179,9 +181,15 @@ class DACAutoencoder:
                     code_list.append(c.unsqueeze(0))
                 else:  # [1, num_codebooks, num_codes] or [batch, num_codebooks, num_codes]
                     code_list.append(c)
-        else:
-            # Batched tensor - split into list of individual tensors
-            code_list = [codes[i:i+1] for i in range(codes.shape[0])]
+        else:          
+            if codes.dim() == 2:
+                # [num_codebooks, num_codes] -> [1, num_codebooks, num_codes]
+                code_list = [codes.unsqueeze(0)]
+            elif codes.dim() == 3:
+                # Batched tensor - split into list of individual tensors
+                code_list = [codes[i:i+1] for i in range(codes.shape[0])]
+            else:
+                raise ValueError(f"Invalid shape for codes: {codes.shape}. Expected [num_codebooks, num_codes] or [batch_size, num_codebooks, num_codes]")
         
         results = []
 
@@ -230,5 +238,5 @@ class DACAutoencoder:
         for p, w in zip(paths, wavs):
             # Save audio as WAV file
             torchaudio.save(p, w, self.sampling_rate)
-            logger.info(f"Saved audio to {p}")
+            logger.debug(f"Saved audio to {p}")
 
