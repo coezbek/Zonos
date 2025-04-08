@@ -243,12 +243,21 @@ class Zonos(nn.Module):
         disable_torch_compile: bool = False,
         callback: Callable[[torch.Tensor, int, int], bool] | None = None,
     ):
-        # Print the sampling parameters as a short string
-        sampling_params_str = '_'.join([f"{k[0]}{v}" for k, v in sampling_params.items()])
-        logging.debug(f"Sampling parameters: {sampling_params_str}")
-        
         # Ensure cfg_scale is supported (avoid cfg_scale = 1)
         assert cfg_scale != 1, "TODO: add support for cfg_scale=1"
+
+        if batch_size * 2 != prefix_conditioning.shape[0]:
+            raise ValueError(f"Batch size mismatch: {batch_size} * 2 != {prefix_conditioning.shape[0]}")
+
+        # Make a copy because we modify the sampling parameters
+        sampling_params = sampling_params.copy()
+
+        # Print the sampling parameters as a short string
+        sampling_params_str = '_'.join([
+            f"{k[0]}{round(v, 4) if k not in ['top_p', 'min_p'] else v}"
+            for k, v in sampling_params.items()
+        ])
+        logging.debug(f"Sampling parameters: {sampling_params_str}")
 
         # Determine length of any provided audio prefix
         # (audio_prefix_codes is [batch_size, 9, prefix_audio_seq_len])
