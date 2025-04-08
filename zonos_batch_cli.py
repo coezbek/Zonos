@@ -318,7 +318,7 @@ def main():
             logger.info(f"Detected VRAM: {vram:.2f} GB. Setting max_per_batch to {args.max_per_batch}.")
         else:
             if args.max_per_batch > estimated_max_per_batch:
-                logger.warning(f"max_per_batch ({args.max_per_batch}) exceeds estimated max ({estimated_max_per_batch}) for {vram} GB of vRAM.")
+                logger.warning(f"max_per_batch ({args.max_per_batch}) exceeds estimated max ({estimated_max_per_batch}) for {vram:.2f} GB of vRAM.")
             else:
                 logger.info(f"max_per_batch set to {args.max_per_batch}, estimated max is {estimated_max_per_batch}.")
 
@@ -355,6 +355,8 @@ def main():
                     if key not in transcript:
                         print(f"⚠️  Warning: Key '{key}' not found in transcript.json. Using empty string as prefix text.")
                     prefix_audio_text.append(transcript.get(key, ""))
+        else:
+            prefix_audio_text = [""] * len(args.prefix_audio)
     else:
         silence_path = "assets/silence_100ms.wav"  # Ensure this file exists
         prefix_audio_codes = load_audio(silence_path, model)
