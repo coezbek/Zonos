@@ -163,7 +163,7 @@ class DACAutoencoder:
             logger.warning(f"Error normalizing loudness (audio too short?): {e}")
             return audio
         
-    def codes_to_wavs(self, codes: torch.Tensor | list[torch.Tensor]) -> None:
+    def codes_to_wavs(self, codes: torch.Tensor | list[torch.Tensor]) -> list[torch.Tensor]:
         """
         Decode audio codes and into WAV file(s).
         
