@@ -195,6 +195,11 @@ class DACAutoencoder:
 
         # Decode and save each audio file
         for c in code_list:
+
+            if c.shape[2] == 0:
+                logger.warning("Empty codebook detected, skipping decoding.")
+                continue
+
             # Decode codes to audio
             wav = self.decode(c).cpu().squeeze(0) # [batch==1, 1, num_samples] -> [1, num_samples]
 
