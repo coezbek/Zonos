@@ -78,7 +78,7 @@ def main():
         "sampling_params": {
             "top_p": 0, 
             "top_k": 0,
-            "min_p": 0,
+            "min_p": 0.001,
             "linear": 0.8,
             "conf": 0.2,
             "quad": 0.0,
@@ -91,7 +91,7 @@ def main():
     }
     
     # For reproducibility.
-    torch.manual_seed(421)
+    torch.manual_seed(432)
     
     # Generate audio codes with the provided prefix audio and generation parameters.
     codes = model.generate(
