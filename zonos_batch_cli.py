@@ -183,7 +183,12 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes, prefix_au
                     os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
                 # Save the decoded audio
-                wav = model.autoencoder.codes_to_wavs(code)[0]
+                wavs = model.autoencoder.codes_to_wavs(code)
+                if len(wavs) == 0:
+                    print(f"Generation of audio for {textwrap.shorten(text[i], width=75)} failed.")
+                    continue
+                    
+                wav = wavs[0]
 
                 sr = model.autoencoder.sampling_rate
 
