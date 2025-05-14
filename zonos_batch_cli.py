@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+import textwrap
 import torch
 import math
 import logging
@@ -199,12 +200,12 @@ def generate_audio(args, model, speaker_embedding, prefix_audio_codes, prefix_au
                     batch_quality.append(d)
                     overall_quality.append(d)
 
-                    print(f"Generated audio saved to {output_file} | Audiobox Aesthetics: {quality_string(d)} | {text[i][:20]}...")
+                    print(f"Generated audio saved to {output_file} | Audiobox Aesthetics: {quality_string(d)} | {textwrap.shorten(text[i], width=50)}")
 
                     if args.bestof != 0:
                         text_to_outputs[text[i]].append((output_file, d))
                 else:
-                    print(f"Generated audio saved to {output_file} | {text[i][:20]}...")
+                    print(f"Generated audio saved to {output_file} | {textwrap.shorten(text[i], width=75)}")
 
         if args.audio_aesthetics and len(codes) > 1:
             print(f"Batch Audiobox Aesthetics:   {quality_string(batch_quality)}")
@@ -234,6 +235,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate speech with Zonos CLI (Batch Mode).")
     parser.add_argument("--text", nargs="+", help="List of texts to generate speech for.")
     parser.add_argument("--text_file", default=None, help="Path to a text file with one text per line.")
+    parser.add_argument("--text_random", type=int, default='0', help="Use the given number of random sentences from Facebook EARS dataset (-1 == max_per_batch).")
     parser.add_argument("--language", default="en-us", help="Language code (e.g., en-us, de).")
     parser.add_argument("--reference_audio", default="assets/exampleaudio.mp3", help="Path to reference speaker audio.")
     parser.add_argument("--prefix_audio", "--audio_prefix", nargs="+", default=None, help="Path to prefix audio (default: 350ms silence).")
@@ -283,9 +285,9 @@ def main():
         with open(args.text_file, "r", encoding="utf-8") as f:
             args.text = [line.strip() for line in f if line.strip()]
 
-    if args.text is None:
-        raise ValueError("Please provide --text or --text_file with texts to generate speech for.")
-    
+    if args.text_random != 0 and args.text is not None:
+        raise ValueError("Please provide either --text_random or --text, not both.")
+
     # Need audio_aesthetics for bestof
     if args.bestof != 0:
         args.audio_aesthetics = True
@@ -304,7 +306,6 @@ def main():
         logging.basicConfig(level=logging.WARNING)
 
     if device.type == "cuda":
-        
         vram = torch.cuda.get_device_properties(device).total_memory / (1024 ** 3)  # Convert to GB
 
         # Assume base model 4GB, 400 MB per sample
@@ -322,7 +323,17 @@ def main():
     else:
         if args.max_per_batch == -1:
             raise RuntimeError("CUDA is required for automatic batch size detection.")
+        
+    if args.text_random != 0:
+        if args.text_random == -1:
+            args.text_random = args.max_per_batch // args.text_repeat
 
+        from zonos.speaker_utils import SpeakerUtils
+        args.text = [SpeakerUtils.random_sentence(args.language) for _ in range(args.text_random)]
+    
+    if args.text is None:
+        raise ValueError("Please provide --text, --text_file or --text_random with texts to generate speech for.")
+    
     from pytictoc import TicToc
     t = TicToc()
     t.tic()
@@ -353,6 +364,7 @@ def main():
                         print(f"⚠️  Warning: Key '{key}' not found in transcript.json. Using empty string as prefix text.")
                     prefix_audio_text.append(transcript.get(key, ""))
         else:
+            print("⚠️  Warning: transcripts.json not found. Using empty string as prefix text for all prefix audio.")
             prefix_audio_text = [""] * len(args.prefix_audio)
     else:
         silence_path = "assets/silence_100ms.wav"  # Ensure this file exists
