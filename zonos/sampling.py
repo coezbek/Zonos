@@ -161,7 +161,42 @@ def modify_logit_for_repetition_penalty(
                 
     return torch.where(logits <= 0, logits * factors, logits / factors)
 
-def print_prob_stats(probs: torch.Tensor, batch_idx: int = 0, codebook_idx: int = 0, top_k: int = 5, mass_threshold: float = 0.95, before=False):
+def print_unified_sampler_explanation(linear: float, conf: float, quad: float):
+
+    # Entropy and probability values
+    import numpy as np
+    entropy_values = np.arange(0.5, 5.25, 0.25)
+    prob_values = np.array([0.001, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5])
+    log_probs = np.log(np.clip(prob_values, 1e-10, 1.0))
+
+    # Table generation
+    rows = []
+    for entropy in entropy_values:
+        row = []
+        scaled_values = []
+        for i, lp in enumerate(log_probs):
+            p_orig = prob_values[i]
+            scale = linear + entropy * conf - lp * quad
+            shaped_logprob = lp * scale
+            p_new = np.exp(shaped_logprob)
+            scaled_values.append(p_new)
+        norm_factor = np.sum(scaled_values)
+        for i, p_new in enumerate(scaled_values):
+            p_norm = p_new / norm_factor
+            scale_percent = (p_norm / prob_values[i]) * 100
+            row.append(f"{p_norm:.4f} ({scale_percent:>3.0f}%)")
+        rows.append(row)
+
+    # Output
+    import pandas as pd
+    df = pd.DataFrame(rows, index=[f"H={h:.2f}" for h in entropy_values], columns=[f"P={p:.3f}" for p in prob_values])
+
+    print("Unified Sampler Explanation")
+    print(f"  Linear: {linear:.2f}, Conf: {conf:.2f}, Quad: {quad:.2f}")
+    print(df.to_string())
+    print("")
+
+def print_prob_stats(probs: torch.Tensor, batch_idx: int = 0, codebook_idx: int = 0, top_k: int = 5, mass_threshold: float = 0.95, before=False, eos_token_id: int = -1):
     p = probs[batch_idx, codebook_idx]
     top_probs, top_indices = torch.topk(p, k=top_k)
     num_non_zero = (p > 0).sum().item()
