@@ -99,12 +99,12 @@ class DACAutoencoder:
         
         return " ".join([f"{i}={input_aesthetics[i]:.1f}" for i in input_aesthetics.keys()])
 
-    def audio_quality(self, wavs: torch.Tensor | list[torch.Tensor], sr, qualities=['CU', 'CE', 'PQ', 'AQ']) -> dict[str, float]:
+    def audio_quality(self, wavs: torch.Tensor | list[torch.Tensor], sr, qualities=['CU', 'CE', 'PQ', 'AQ'], average_overall=True) -> dict[str, float] | list[dict[str, float]]:
         """
-        Compute the given Facebook Audio Aestethics of the given wav inputs
+        Compute the Facebook Audio Aestethics of the given wav inputs including the given qualities.
 
         Quality can be a list of:
-            - 'PC' Production Quality 
+            - 'PQ' Production Quality 
             - 'CU' Content Usefulness
             - 'CE' Content Enjoyment
             - 'PC: Production Complexity - Disabled by default, because the generated audio isn't not complex
@@ -129,22 +129,44 @@ class DACAutoencoder:
         else:
             qualities_to_compute = set(qualities) - {'AQ'}
 
+        if average_overall:
+            average_qualities = {j: sum(i[j] for i in aesthetics) / len(aesthetics) for j in qualities_to_compute}
 
-        average_qualities = {j: sum(i[j] for i in aesthetics) / len(aesthetics) for j in qualities_to_compute}
+            if 'AQ' in qualities:
+                average_qualities['AQ'] = sum(average_qualities[j] for j in qualities_to_compute) / len(qualities_to_compute)
 
-        if 'AQ' in qualities:
-            average_qualities['AQ'] = sum(average_qualities[j] for j in qualities_to_compute) / len(qualities_to_compute)
-
-        return average_qualities
-    
-    def best_of_n(self, wavs: list[torch.Tensor], sr, n: int = -1) -> list[torch.Tensor]:
+            return average_qualities
+        
+        else:
+            # Compute average quality for each audio file
+            results = []
+            for i in range(len(aesthetics)):
+                aesthetic = { j: aesthetics[i][j] for j in qualities_to_compute }
+                if 'AQ' in qualities:
+                    aesthetic['AQ'] = sum(aesthetic[j] for j in qualities_to_compute) / len(qualities_to_compute)
+                results.append(aesthetic)
+            
+            return results   
+        
+    def best_per_chunk(self, wavs: list[torch.Tensor], sr, n: int = -1) -> list[torch.Tensor]:
         """
-        Select the best audio from a sample of size n from a list of audio tensors based on the average quality score.
+        Select the best audios from the given list of wav files.
+        Considers chunks of size n for comparison (use -1 to compare across all wavs).
+        Uses audio aestethics to decide which audio is of best quality.
         """
         
-        n = len(wavs) if n == -1 else n
+        n = len(wavs) if n == -1 or n > len(wavs) else n
 
-        return [max([wavs[i * n + j] for j in range(n)], key=lambda x: self.audio_quality(x, sr, qualities=['AQ'])['AQ']) for i in range(len(wavs) // n)]
+        qualities = self.audio_quality(wavs, sr, qualities=['AQ'], average_overall=False)
+
+        best_wavs = []
+        for i in range(0, len(wavs), n):
+            group_qualities = qualities[i:i + n]
+            best_index = max(range(len(group_qualities)), key=lambda j: group_qualities[j]['AQ'])
+            best_wavs.append(wavs[i + best_index])
+        return best_wavs
+
+        # return [max([wavs[i * n + j] for j in range(n)], key=lambda x: self.audio_quality(x, sr, qualities=['AQ'])['AQ']) for i in range(len(wavs) // n)]
 
     # Aim for -19.0 LUFS (Mono) compares to -16.0 LUFS (Stereo)
     def normalize_loudness(self, audio, sr, target_lufs=-19.0):
