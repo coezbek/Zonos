@@ -5,6 +5,9 @@ import logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+trace_logger = logging.getLogger(__name__ + ".trace")
+trace_logger.setLevel(logging.INFO)
+
 def multinomial(input: torch.Tensor, num_samples: int, replacement=False, *, generator=None):
     """torch.multinomial with arbitrary number of dimensions, and number of candidates on the last dimension.
 
@@ -128,7 +131,7 @@ def apply_min_p(probs: torch.Tensor, min_p: float) -> torch.Tensor:
 def modify_logit_for_repetition_penalty(
     logits: torch.Tensor,
     generated_tokens: torch.Tensor,
-    repetition_penalty: float,
+    repetition_penalty: torch.Tensor,
     repetition_penalty_window: int,
 ):
     """See https://arxiv.org/abs/1909.05858
@@ -138,7 +141,11 @@ def modify_logit_for_repetition_penalty(
     """
     generated_tokens = generated_tokens[..., -repetition_penalty_window:]
     generated_tokens = generated_tokens.clamp_max(logits.shape[-1] - 1).to(torch.int64)
-    rp = torch.full_like(logits, repetition_penalty)
+
+    if repetition_penalty.ndim == 1:
+        repetition_penalty = repetition_penalty[:, None, None]  # expand to (B, 1, 1)
+    rp = torch.ones_like(logits) * repetition_penalty  # broadcasted
+
     factors = torch.ones_like(logits).scatter_reduce(2, generated_tokens, rp, reduce="prod")
 
     # Debugging: print the penalized tokens
@@ -207,7 +214,8 @@ def print_prob_stats(probs: torch.Tensor, batch_idx: int = 0, codebook_idx: int 
     probs_str = ', '.join(f'{v:.3f}' for v in top_probs.tolist())
 
     before_str = "Before" if before else "After "
-    print(f"{before_str} Batch {batch_idx}, Codebook {codebook_idx} | Top {top_k}: [{tokens_str}] | Probs: [{probs_str}] | Non-zero: {num_non_zero:>4} | {int(mass_threshold*100)}% mass in: {tokens_to_mass:>4} tokens | {before_str}")
+    eos_token_str = f"p(EOS): {p[eos_token_id]:.3f} | " if eos_token_id != -1 else ""
+    print(f"{before_str} Batch {batch_idx}, Codebook {codebook_idx} | Top {top_k}: [{tokens_str}] | Probs: [{probs_str}] | Non-zero: {num_non_zero:>4} | {int(mass_threshold*100)}% mass in: {tokens_to_mass:>4} tokens | {eos_token_str}{before_str}")
     if not before:
         global distribution
         distribution.append(tokens_to_mass)
@@ -231,8 +239,9 @@ def sample_from_logits(
     conf: float = 0.0,
     quad: float = 0.0,
     generated_tokens: torch.Tensor | None = None,
-    repetition_penalty: float = 3.0,
+    repetition_penalty: float | torch.Tensor = 3.0,
     repetition_penalty_window: int = 2,
+    eos_token_id: int = -1,
 ) -> torch.Tensor:
     """Sample next token from logits using either top_k/p/min_p OR using NovelAI's Unified Sampler.
     
@@ -268,11 +277,19 @@ def sample_from_logits(
     Returns:
         torch.Tensor: Sampled tokens.
     """
-    if repetition_penalty != 1.0 and generated_tokens is not None:
+    # Each batch can have its separate repetition penalty for EOS handling
+    if not isinstance(repetition_penalty, torch.Tensor):
+        repetition_penalty = torch.tensor(repetition_penalty, device=logits.device, dtype=logits.dtype)
+        
+    if (repetition_penalty != 1.0).any() and generated_tokens is not None:
         logits = modify_logit_for_repetition_penalty(logits, generated_tokens, repetition_penalty, repetition_penalty_window)
 
+    debug = logger.isEnabledFor(logging.DEBUG)
+    trace = trace_logger.isEnabledFor(logging.DEBUG)
+    log_every_nth = 64
+
     global offset
-    if offset == 0 and logger.isEnabledFor(logging.DEBUG):
+    if offset == 0 and debug:
         print(f"Temperature: {temperature}, Top P: {top_p}, Top K: {top_k}, Min P: {min_p}, Linear: {linear}, Conf: {conf}, Quad: {quad} | RepPen: {repetition_penalty}, RepPenWindow: {repetition_penalty_window}")
 
     if temperature > 0:
@@ -280,15 +297,15 @@ def sample_from_logits(
         # Linear disables temperature
         probs = torch.softmax(logits / temperature, dim=-1)
         offset += 1
-        debug = offset % 64 == 0 and logger.isEnabledFor(logging.DEBUG)
+        debug = debug and offset % log_every_nth == 0
 
         if top_p > 0:
             mass_threshold = top_p
         else:
             mass_threshold = 0.95
 
-        if debug:
-            print_prob_stats(probs, batch_idx=0, codebook_idx=0, top_k=5, mass_threshold=mass_threshold, before=True)
+        if trace or debug:
+            print_prob_stats(probs, batch_idx=0, codebook_idx=0, top_k=5, mass_threshold=mass_threshold, before=True, eos_token_id=eos_token_id)
 
         if linear > 0:
             probs = apply_unified(probs, linear, conf, quad, debug=debug)
@@ -301,8 +318,8 @@ def sample_from_logits(
             probs = apply_min_p(probs, min_p)
 
         # Only print for codebook 0
-        if debug:
-            print_prob_stats(probs, batch_idx=0, codebook_idx=0, top_k=5, mass_threshold=mass_threshold, before=False)
+        if trace or debug:
+            print_prob_stats(probs, batch_idx=0, codebook_idx=0, top_k=5, mass_threshold=mass_threshold, before=False, eos_token_id=eos_token_id)
 
         next_token = multinomial(probs, num_samples=1)
     else:

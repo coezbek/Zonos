@@ -301,7 +301,7 @@ class Zonos(nn.Module):
         logits = self._prefill(prefix_conditioning, delayed_prefix_audio_codes, inference_params, cfg_scale)
 
         # Sample one token from the logits
-        next_token = sample_from_logits(logits, **sampling_params)
+        next_token = sample_from_logits(logits, eos_token_id=self.eos_token_id, **sampling_params)
 
         # The offset marks how many tokens we have processed in the audio dimension
         offset = delayed_prefix_audio_codes.shape[2]
@@ -315,13 +315,13 @@ class Zonos(nn.Module):
 
         # Update inference parameters to account for the initial tokens
         prefix_length = prefix_conditioning.shape[1] + prefix_audio_len + 1
-        inference_params.seqlen_offset += prefix_length
+        inference_params.seqlen_offset += prefix_length 
         inference_params.lengths_per_sample[:] += prefix_length
 
         # Create a logit bias that forbids codebooks 1..8 from generating an EOS token
         logit_bias = torch.zeros_like(logits)
         logit_bias[:, 1:, self.eos_token_id] = -torch.inf  # only allow codebook 0 to predict EOS
-        logit_bias[:, 0, self.eos_token_id] -= torch.log(torch.tensor(8.0, device=logits.device)) # Make EOS less likely because audio often is cut off
+        logit_bias[:, 0, self.eos_token_id] -= torch.log(torch.tensor(1024.0, device=logits.device)) # Make EOS less likely because audio often is cut off
 
         # Track which samples have stopped (hit EOS) and how many steps remain
         stopping = torch.zeros(batch_size, dtype=torch.bool, device=device)
@@ -331,6 +331,15 @@ class Zonos(nn.Module):
 
         cfg_scale = torch.tensor(cfg_scale)
         step = 0
+
+        # New EOS Handling
+        max_steps_after_eos = 6 # 6/86 ~ 70ms of silence
+
+        steps_after_eos = torch.full((batch_size,), max_steps_after_eos, device=device) 
+        
+        # eos_mode will be true, once we detect EOS in codebook 0
+        eos_mode = torch.zeros(batch_size, dtype=torch.bool, device=device)
+        sampling_params['repetition_penalty'] = torch.full((batch_size,), sampling_params['repetition_penalty'], device=device) # Keep rep penalities for each sample
 
         # Main loop to decode tokens until all sequences have reached their limit or hit EOS
         while torch.max(remaining_steps) > 0:
@@ -343,15 +352,48 @@ class Zonos(nn.Module):
             logits = decode_one_token(input_ids, inference_params, cfg_scale, allow_cudagraphs=cg)
             logits += logit_bias
 
+            # Disable repetition penalty for all samples that are in EOS mode
+            sampling_params['repetition_penalty'][eos_mode] = 1.0 
+
+            # Change logits once we enter EOS mode:
+            # For samples in EOS mode but not yet past their 8 steps
+            eos_active = eos_mode & (steps_after_eos > 0)
+            logits[eos_active, 0, self.eos_token_id] = -torch.inf
+            steps_after_eos[eos_active] -= 1            
+
             # Sample from these logits
             next_token = sample_from_logits(
                 logits,
                 generated_tokens=delayed_codes[..., :offset],
+                eos_token_id=self.eos_token_id, 
                 **sampling_params
             )
 
+            # if eos_mode and steps_after_eos > 0:
+                # print(f" Next token for sample 0: {next_token[0, :]}")
+
             # Check if any samples have produced an EOS in codebook 0
             eos_in_cb0 = next_token[:, 0] == self.eos_token_id
+
+            # New EOS detections: samples that are not already in eos_mode and now emit EOS
+            new_eos = eos_in_cb0[:, 0] & (~eos_mode)
+            if new_eos.any():
+                logging.debug(f"Detected EOS in codebook 0 for samples: {new_eos.nonzero(as_tuple=True)[0].tolist()} at offset {offset}. Resampling with -torch.inf.")
+
+                eos_mode[new_eos] = True
+                steps_after_eos[new_eos] = max_steps_after_eos
+
+                # Mask EOS logits again to re-sample
+                logits[new_eos, 0, self.eos_token_id] = -torch.inf
+                next_token = sample_from_logits(
+                    logits,
+                    generated_tokens=delayed_codes[..., :offset],
+                    eos_token_id=self.eos_token_id,
+                    **sampling_params
+                )
+                eos_in_cb0 = next_token[:, 0] == self.eos_token_id
+                assert ((~eos_in_cb0) & new_eos).any(), "EOS token found in codebook 0 despite logits set to -torch.inf."
+
 
             # If EOS in codebook 0, limit the remaining steps for that sample
             remaining_steps[eos_in_cb0[:, 0]] = torch.minimum(
