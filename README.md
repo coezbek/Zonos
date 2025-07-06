@@ -91,9 +91,6 @@ uv run zonos_batch_cli.py --text "Hello, world!" "This audio is generated in par
 uv run zonos_batch_cli.py --input_file sample_input.txt --output output/output.wav --text_repeat 2
 ```
 
-```python
-
-
 ## Features
 
 - Zero-shot TTS with voice cloning: Input desired text and a 10-30s speaker sample to generate high quality TTS output
